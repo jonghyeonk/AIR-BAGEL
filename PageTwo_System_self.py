@@ -12,6 +12,7 @@ from tkinter import messagebox
 import numpy
 import pandas as pd
 import datetime
+from datetime import datetime as dt
 
 # Pages
 from PageTwo_Inject_Anomaly import Inject_Anomaly
@@ -165,13 +166,13 @@ class System_step1_self(tk.Toplevel):
             globals()['down_2_{}'.format(self.en)] = Text(frame_buttons1, height=1, width=24)
             globals()['down_2_{}'.format(self.en)].grid(row=self.en-1, column=2)
             globals()['down_2_{}'.format(self.en)].insert(tk.CURRENT, "2020-01-02 03:04:05.000")
-            globals()['down_3_{}'.format(self.en)] = Label(frame_buttons1, text=' ~ '.format(i), font=("Consolas", 10, 'bold'),
-                                                 fg="white", bg='gray1', anchor="w")
-            globals()['down_3_{}'.format(self.en)].grid(row=self.en-1, column=3)
-
-            globals()['down_4_{}'.format(self.en)] = Text(frame_buttons1, height=1, width=24)
-            globals()['down_4_{}'.format(self.en)].grid(row=self.en-1, column=4)
-            globals()['down_4_{}'.format(self.en)].insert(tk.CURRENT, "2020-01-02 03:04:05.000")
+            # globals()['down_3_{}'.format(self.en)] = Label(frame_buttons1, text=' ~ '.format(i), font=("Consolas", 10, 'bold'),
+            #                                      fg="white", bg='gray1', anchor="w")
+            # globals()['down_3_{}'.format(self.en)].grid(row=self.en-1, column=3)
+            #
+            # globals()['down_4_{}'.format(self.en)] = Text(frame_buttons1, height=1, width=24)
+            # globals()['down_4_{}'.format(self.en)].grid(row=self.en-1, column=4)
+            # globals()['down_4_{}'.format(self.en)].insert(tk.CURRENT, "2020-01-02 03:04:05.000")
 
             downtime.grid(row=self.en, column=0, columnspan=5, padx=(2,0), pady =(3,0) ,sticky="nsew")
             canvas_failure.configure(yscrollcommand=vsb1.set, xscrollcommand=hsb1.set)
@@ -234,18 +235,13 @@ class System_step1_self(tk.Toplevel):
             for i in dat['Activity']:
                 k += 1
                 sl[k - 1] = globals()['act{}_sys_s'.format(k)].get()
-            #
-            # k = 0
-            # sf = list(numpy.repeat("rate", len(dat)))
-            # for i in systemlist:
-            #     sf[k - 1] = globals()['sys_{}_p'.format(k)].get()
-            # dat2 = {'System': systemlist, ''}
 
             dat['System'] = pd.DataFrame(sl)
-            dat = pd.merge(dat, dat, on="Activity")
+            # dat = pd.merge(dat, dat, on="Activity")
+            dat = dat[['Activity' , 'System']]
+            Abnorm_sys.dat = dat
 
-
-            dat = dat[['Activity', 'System', '']]
+            # dat = dat[['Activity', 'System', '']]
             global extracted_data4
             extracted_data4 = pd.merge(self.extracted_data, dat, on="Activity")
             params = {
@@ -259,12 +255,31 @@ class System_step1_self(tk.Toplevel):
             cols = ["System", "Frequency", "Activities"]
             systemlist2 = systemlist2[cols]
             System_step1_self.systemlist2 = systemlist2
-            System_step1_self.mylist1.delete('1.0', END)
-            System_step1_self.mylist1.insert(tk.CURRENT, systemlist2[0:len(systemlist2)].to_string(index=False))
+            # System_step1_self.mylist1.delete('1.0', END)
+            # System_step1_self.mylist1.insert(tk.CURRENT, systemlist2[0:len(systemlist2)].to_string(index=False))
             Inject_Anomaly.data_with_system = extracted_data4
-            messagebox.showinfo("Successfully proceeded", "Successfully proceeded")
+
+            df3 = pd.DataFrame(columns=['Event:system down',  'Start_Timestamp'])
+
+            cat1 = pd.DataFrame()
+            sys_down = list(numpy.repeat("sys", self.en))
+            start = list(numpy.repeat("st", self.en))
+
+            for i in range(1, self.en+1):
+                sys_down[i - 1] = globals()['down_0_{}'.format(i)].get()
+                start[i - 1] = globals()['down_2_{}'.format(i)].get("1.0", "end-1c")
+
+            form= "%Y-%m-%d %H:%M:%S.%f"
+            df3['Event:system down'] =  sys_down
+            df3['Start_Timestamp'] = start
+            df3['Start_Timestamp'] = df3['Start_Timestamp'].apply(lambda x: dt.strptime(x, form))
+
+            df4= df3[['Event:system down', 'Start_Timestamp']]
+            Inject_Anomaly.system_down =df4     # System down
+            PageThree.system_down =df4
+
+            messagebox.showinfo("Successfully proceeded", "Configured")
             root.destroy()
-            self.root2.lift()
 
         action_sys1 = tk.Button(base_frame, text="Apply", padx=25, command=lambda: attach_sys(activitylist))
         action_sys1.place(x=755, y=420)

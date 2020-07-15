@@ -487,5 +487,5 @@ class Abnorm_p():
         df_p = data_with_parameter_res
         df_p = df_p.drop(["parameter_l", "parameter_r", "parameter"], axis=1)
         # df_r.to_csv("data_with_anomalies_res.csv", mode='w', index=False)
-        messagebox.showinfo("Successfully Applied", "Successfully Applied")
+        messagebox.showinfo("Successfully Applied", "Completed to inject anomalies")
         return df_r

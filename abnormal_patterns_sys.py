@@ -267,7 +267,7 @@ class Abnorm_sys():
         # df_new = df_new.drop(["sys_anomaly_type", "resource_anomaly_type"], axis=1)
         PageThree.after = df_new
         # df_new.to_csv("data_with_anomalies.csv", mode="w", index=False)
-        messagebox.showinfo("Successfully Applied", "Successfully Applied")
+        messagebox.showinfo("Successfully Applied", "Completed to inject anomalies")
         return df_new
 
 
