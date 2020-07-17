@@ -11,12 +11,18 @@ from tkinter.scrolledtext import ScrolledText
 from tkinter import messagebox
 
 #For Data preprocess
-import psycopg2
 from PIL import ImageTk, Image
 import numpy as np
 import pandas as pd
 
 #For PM4PY
+from pm4py.objects.conversion.log import factory as conversion_factory
+from pm4py.objects.log.adapters.pandas import csv_import_adapter
+from pm4py.algo.discovery.inductive import factory as inductive_miner
+from pm4py.visualization.process_tree import factory as pt_vis_factory
+from pm4py.visualization.petrinet import factory as vis_factory
+from pm4py.visualization.petrinet import factory as pn_vis_factory
+
 from pm4py.objects.conversion.log import factory as conversion_factory
 from pm4py.objects.log.adapters.pandas import csv_import_adapter
 from pm4py.algo.discovery.inductive import factory as inductive_miner

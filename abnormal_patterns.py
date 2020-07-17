@@ -10,7 +10,6 @@ from tkinter.scrolledtext import ScrolledText
 from tkinter import messagebox
 
 #For Data preprocess
-import psycopg2
 import numpy as np
 import pandas as pd
 from datetime import datetime as dt
