@@ -361,7 +361,7 @@ class Abnorm_p():
             np.random.seed(seed_value)
 
         Inject_Anomaly.text_progress.insert(tk.END, "<Resource> Started preprocessing to set the input of anomaly patterns\n")
-        Inject_Anomaly.root.update()
+        Inject_Anomaly.parent.update()
         time.sleep(1)
         print("Started preprocessing to set the input of anomaly patterns")
         start_parameter = datetime.datetime.now()
@@ -369,7 +369,7 @@ class Abnorm_p():
         df_new = self.setting2(df_1, m_skip, m_form, h_moved, m_switch, m_insert, m_rework, m_replace)
         end_parameter = datetime.datetime.now()
         Inject_Anomaly.text_progress.insert(tk.END, "<Resource> Finished preprocessing (running time={0})\n".format(end_parameter-start_parameter))
-        Inject_Anomaly.root.update()
+        Inject_Anomaly.parent.update()
         time.sleep(1)
         print("Finished preprocessing (running time={0})".format(end_parameter-start_parameter))
         types2 = df_new['type'].unique()
@@ -380,7 +380,7 @@ class Abnorm_p():
         else:
             pass
         Inject_Anomaly.text_progress.insert(tk.END, "<Resource> Started to inject anomaly patterns: {0}\n".format(types2))
-        Inject_Anomaly.root.update()
+        Inject_Anomaly.parent.update()
         time.sleep(1)
         print("Started to inject anomaly patterns")
         start_inject = datetime.datetime.now()
@@ -389,49 +389,49 @@ class Abnorm_p():
                 df_new = self.skip(df_new)
                 Inject_Anomaly.text_progress.insert(tk.END, "<Resource> Finished skip ({0}/{1})\n".format(i + 1, len(types2)))
                 Inject_Anomaly.text_progress.see(tk.END)
-                Inject_Anomaly.root.update()
+                Inject_Anomaly.parent.update()
                 time.sleep(1)
             elif types2[i] == "incomplete":
                 df_new = self.incomplete(df_new)
                 Inject_Anomaly.text_progress.insert(tk.END, "<Resource> Finished incomplete ({0}/{1})\n".format(i + 1, len(types2)))
                 Inject_Anomaly.text_progress.see(tk.END)
-                Inject_Anomaly.root.update()
+                Inject_Anomaly.parent.update()
                 time.sleep(1)
             elif types2[i] == "switch":
                 df_new = self.switch(df_new)
                 Inject_Anomaly.text_progress.insert(tk.END, "<Resource> Finished switch ({0}/{1})\n".format(i + 1, len(types2)))
                 Inject_Anomaly.text_progress.see(tk.END)
-                Inject_Anomaly.root.update()
+                Inject_Anomaly.parent.update()
                 time.sleep(1)
             elif types2[i] == "form based":
                 df_new = self.form_based(df_new)
                 Inject_Anomaly.text_progress.insert(tk.END, "<Resource> Finished form based ({0}/{1})\n".format(i + 1, len(types2)))
                 Inject_Anomaly.text_progress.see(tk.END)
-                Inject_Anomaly.root.update()
+                Inject_Anomaly.parent.update()
                 time.sleep(1)
             elif types2[i] == "rework":
                 df_new = self.rework(df_new)
                 Inject_Anomaly.text_progress.insert(tk.END, "<Resource> Finished rework ({0}/{1})\n".format(i + 1, len(types2)))
                 Inject_Anomaly.text_progress.see(tk.END)
-                Inject_Anomaly.root.update()
+                Inject_Anomaly.parent.update()
                 time.sleep(1)
             elif types2[i] == "moved":
                 df_new = self.moved(df_new)
                 Inject_Anomaly.text_progress.insert(tk.END, "<Resource> Finished moved({0}/{1})\n".format(i + 1, len(types2)))
                 Inject_Anomaly.text_progress.see(tk.END)
-                Inject_Anomaly.root.update()
+                Inject_Anomaly.parent.update()
                 time.sleep(1)
             elif types2[i] == "insert":
                 df_new = self.insert(df_new)
                 Inject_Anomaly.text_progress.insert(tk.END, "<Resource> Finished insert ({0}/{1})\n".format(i + 1, len(types2)))
                 Inject_Anomaly.text_progress.see(tk.END)
-                Inject_Anomaly.root.update()
+                Inject_Anomaly.parent.update()
                 time.sleep(1)
             elif types2[i] == "replace":
                 df_new = self.replace(df_new)
                 Inject_Anomaly.text_progress.insert(tk.END, "<Resource> Finished replace ({0}/{1})\n".format(i + 1, len(types2)))
                 Inject_Anomaly.text_progress.see(tk.END)
-                Inject_Anomaly.root.update()
+                Inject_Anomaly.parent.update()
                 time.sleep(1)
             else:
                 pass
@@ -456,7 +456,7 @@ class Abnorm_p():
         df_new = df_new[["Case", "Event", "Activity", "Timestamp", "unixtime", "Resource", "Resource_failure_rate", "Resource_Pass/Fail", "order", "resource_anomaly_type", "resource_parameter", "trace_change_resource"]]
         end_inject = datetime.datetime.now()
         Inject_Anomaly.text_progress.insert(tk.END, "<Resource> Finished to inject anomaly patterns (running time={0})\n".format(end_inject-start_inject))
-        Inject_Anomaly.root.update()
+        Inject_Anomaly.parent.update()
         time.sleep(1)
         np.random.seed(0)
         df_cal = df_new.sort_values(by=["Case", "Timestamp"], ascending=[True, True])

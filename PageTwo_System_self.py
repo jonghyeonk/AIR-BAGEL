@@ -25,8 +25,6 @@ class System_step1_self(tk.Toplevel):
 
     def __init__(self, root, parent, *args, **kwargs):
         self.root = root
-        self.root.geometry("875x470")
-        self.root.resizable(False, False)
         self.root.rowconfigure(0, weight=1)
         self.root.columnconfigure(0, weight=1)
         self.root["bg"] = 'dark slate gray'
@@ -37,14 +35,18 @@ class System_step1_self(tk.Toplevel):
 
         # Create main containers
         base_frame = Frame(root, bg='gray1', width=250, height=200)
-        base_frame.grid(row=0, column=0, pady=(0, 7), sticky="nsew")
+        base_frame.grid(row=0, column=0,  sticky="nsew")
+        base_frame.grid_rowconfigure(1, weight=1)
+        base_frame.grid_columnconfigure(0, weight=1)
+
+        center = Frame(root, bg='gray1')
+        center.grid(row=1, column=0, sticky="nsew")
 
         # title label (top)
         base_frame_label1 = Label(base_frame, text='Connection between System & Activity',
                                   font=("Consolas", 10, 'bold'),
-                                  fg="white", bg='gray25', anchor="center", relief="raised")
-        base_frame_label1.grid(row=0, column=0, sticky="w")
-        base_frame_label1.config(width=122)
+                                  fg="white", bg='gray25',  relief="raised")
+        base_frame_label1.grid(row=0, column=0, columnspan=3,sticky="nsew")
 
         # System info (center-top)
 
@@ -56,15 +58,15 @@ class System_step1_self(tk.Toplevel):
         activitylist = self.extracted_data.groupby('Activity').agg(params).reset_index()
         system_info_frame1 = LabelFrame(base_frame, text="The number of activities ={}".format(len(activitylist)),
                                         font=("Consolas", 10, 'bold'),
-                                        fg="white", bg='gray1', bd=3, padx=12, width=500, height=310, pady=7)
-        system_info_frame1.place(x=10, y=30)
+                                        fg="white", bg='gray1', bd=3)
+        system_info_frame1.grid(row=1, column=0, sticky="nw", padx=10, pady=7)
 
         # Select system attribute (center-top)
         self.cVar1 = IntVar()
         s = ttk.Style()
         s.configure('Red.TCheckbutton', foreground="aquamarine", background='gray1')
         sub_frame0 = Frame(system_info_frame1, bg='gray1', width=500)
-        sub_frame0.grid(row=0, column=0, sticky='w')
+        sub_frame0.grid(row=0, column=0, sticky='w', pady=(0,3))
         sub_frame0_label1 = ttk.Checkbutton(sub_frame0, text="Select a system attribute from existing dataframe: ", variable=self.cVar1, width=8,
                                   onvalue=1, style='Red.TCheckbutton')
         sub_frame0_label1.grid(row=0, column=0, sticky="w", padx=(0 ,1))
@@ -95,10 +97,10 @@ class System_step1_self(tk.Toplevel):
 
         sub_frame2_label1_1 = Label(sub_frame1, text='the number of system =', font=("Consolas", 10, 'bold'),
                                   fg="white", bg='gray1' ,anchor="w")
-        sub_frame2_label1_1.grid(row=0, column=1, pady= (3,0), sticky="w")
+        sub_frame2_label1_1.grid(row=0, column=1, pady= (5,0), sticky="w")
 
         textBox1 = Text(sub_frame1, height=1, width=4)
-        textBox1.grid(row=0, column=2, pady= (3,0), sticky="w")
+        textBox1.grid(row=0, column=2, pady= (5,0), sticky="w")
         textBox1.configure(state="normal", background="white")
 
         global systemlist
@@ -124,7 +126,7 @@ class System_step1_self(tk.Toplevel):
                 globals()['act{}_sys_s'.format(k)]['values'] = systemlist
                 globals()['act{}_sys_s'.format(k)].current(numpy.random.randint(0,len(systemlist)))
 
-            messagebox.showinfo("Button Clicked2",
+            messagebox.showinfo("Message",
                                 "{} systems have been generated".format(n), parent=root)
             numpy.random.seed(0)
             root.attributes('-topmost', 1)
@@ -134,10 +136,10 @@ class System_step1_self(tk.Toplevel):
         action1.grid(row=1, column=3, padx= (40,0 ))
 
         # System down
-        base_frame_label1 = LabelFrame(base_frame, text="Set system downtime event",
+        base_frame_label1 = LabelFrame(center, text="Set system downtime event",
                                        font=("Consolas", 10, 'bold'),
                                        fg="white", bg='gray1', bd=3, padx=14, pady=7)
-        base_frame_label1.place(x=10, y=140)
+        base_frame_label1.grid(row=0, column=0, sticky = 'nw', padx=10, pady=7)
         sub_frame2 = Frame(base_frame_label1, bg='gray1')
         sub_frame2.grid(row=0, column=0, sticky='w')
 
@@ -193,10 +195,10 @@ class System_step1_self(tk.Toplevel):
 
 
         # Activity - System connection (Center-mid)
-        base_frame_label2 = LabelFrame(base_frame, text="Allocate systems on each activity",
+        base_frame_label2 = LabelFrame(center, text="Allocate systems on each activity",
                                        font=("Consolas", 10, 'bold'),
                                        fg="white", bg='gray1', bd=3, padx=14, pady=7)
-        base_frame_label2.place(x=470, y=140)
+        base_frame_label2.grid(row=0, column=1, sticky = 'nwse', padx=10, pady=7)
 
         sub_frame3 = Frame(base_frame_label2, bg='gray1')
         sub_frame3.grid(row=0, column=0, sticky='w')
@@ -278,9 +280,9 @@ class System_step1_self(tk.Toplevel):
             Inject_Anomaly.system_down =df4     # System down
             PageThree.system_down =df4
 
-            messagebox.showinfo("Successfully proceeded", "Configured")
+            messagebox.showinfo("Message", "Successfully proceeded")
             root.destroy()
 
-        action_sys1 = tk.Button(base_frame, text="Apply", padx=25, command=lambda: attach_sys(activitylist))
-        action_sys1.place(x=755, y=420)
+        action_sys1 = tk.Button(center, text="Apply", width=10, command=lambda: attach_sys(activitylist))
+        action_sys1.grid(row=1, column=1, sticky = 'e', padx=(0,10), pady=10)
 

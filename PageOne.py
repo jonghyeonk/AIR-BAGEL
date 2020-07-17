@@ -10,6 +10,7 @@ from tkinter import ttk
 from tkinter.scrolledtext import ScrolledText
 from tkinter import messagebox
 
+
 #For Data preprocess
 import pandas as pd
 import time
@@ -24,54 +25,67 @@ from PageThree import PageThree
 from PageTwo_Resource import Resource_Step1
 from PageTwo_System import System_Step1
 from PageThree import PageThree
+from PageTwo_Inject_Anomaly import Inject_Anomaly
 
 class GridTest(tk.Tk):
 
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
         self.title("AIR-BAGEL")
-        self.geometry("634x400")
-        self.resizable(False,False)
         self.rowconfigure(0, weight=1)
         self.columnconfigure(0, weight=1)
 
-        global container
-        container = tk.Frame(self)
-        container.grid(row=0, column=0, columnspan=10, rowspan=10, sticky="nsew")
-        container.grid_rowconfigure(0, weight=1)
-        container.grid_columnconfigure(0, weight=1)
+        # global container
+        # container = tk.Frame(self)
+        # container.grid(row=0, column=0, columnspan=10, rowspan=10, sticky="nsew")
+        # container.grid_rowconfigure(0, weight=1)
+        # container.grid_columnconfigure(0, weight=1)
 
         self.frames = {}
 
-        frame = PageOne(container, self)
-        self.frames[PageOne] = frame
+        frame = PageOne(self)
+        self._frame = frame
         frame.grid(row=0, column=0, sticky="nesw")
 
-        self.show_frame(PageOne)
+        self.show_frame(frame)
 
     def show_frame(self, cont):
-        frame = self.frames[cont]
+        frame = cont
         frame.tkraise()
 
-    def show_frame1(self, cont):
-        frame = PageTwo(container, self)
-        self.frames[PageTwo] = frame
-        frame.grid(row=0, column=0, sticky="nesw")
-        self.geometry("589x470")
-        self.resizable(False, False)
-        frame.tkraise()
+    def show_frame1(self):
 
-    def show_frame2(self, cont):
-        frame = PageThree(container, self)
-        self.frames[PageThree] = frame
-        frame.grid(row=0, column=0, sticky="nesw")
-        self.geometry("910x470")
-        self.resizable(False, False)
-        frame.tkraise()
+        new_frame = PageTwo(self)
+        new_frame.grid(row=0, column=0, sticky="nesw")
+
+        self._frame.destroy()
+        self._frame = new_frame
+        new_frame.tkraise()
+
+
+    def show_frame1_2(self):
+
+        new_frame = Inject_Anomaly(self)
+        new_frame.grid(row=0, column=0, sticky="nesw")
+
+        self._frame.destroy()
+        self._frame = new_frame
+        new_frame.tkraise()
+
+
+    def show_frame2(self):
+
+        new_frame = PageThree(self)
+        new_frame.grid(row=0, column=0, sticky="nesw")
+
+        self._frame.destroy()
+        self._frame = new_frame
+        new_frame.tkraise()
+
 
 
 class PageOne(tk.Frame):
-    def __init__(self, parent, controller):
+    def __init__(self, parent):
         tk.Frame.__init__(self, parent, bg='dark slate gray')
         # Create main containers
         top_frame = Frame(self, bg='dark slate gray', width=50, height=50, padx=7, pady=3)
@@ -85,18 +99,20 @@ class PageOne(tk.Frame):
         center.grid_rowconfigure(0, weight=1)
         center.grid_columnconfigure(1, weight=1)
 
+
         # Title widget (top frame)
-        top_mid = Frame(top_frame, bg='gray25', width=300, height=48,highlightthickness=1, highlightbackground="gray15")
-        top_mid.grid(row=0, column=1, pady=(0, 0), sticky="nsew")
-        top_mid_label1 = Label(top_mid, text='(1) Data selection', font=("Consolas", 13, 'bold'),
-                               fg="white", bg='gray25', anchor="center", relief = "raised",width=68)
-        top_mid_label1.grid(row=0, column=0, sticky="w")
+        top_mid_label1 = Label(top_frame, text='(1) Data import and preprocessing', font=("Consolas", 13, 'bold'),
+                               fg="white", bg='gray25', relief = "raised")
+
+        top_mid_label1.grid(row=0, column=1, sticky="nsew")
 
         # Create sub frame (center frame)
         ctr_left = Frame(center, bg='gray1', width=150, height=190, highlightthickness=1, highlightbackground="gray15")
-        ctr_right = Frame(center, bg='gray1', width=200, height=190, highlightthickness=1, highlightbackground="gray15")
+        ctr_right = Frame(center, bg='gray1', height=190, highlightthickness=1, highlightbackground="gray15")
         ctr_left.grid(row=0, column=0, padx=(0, 7), pady=(0, 3), sticky="ns")
         ctr_right.grid(row=0, column=1, pady=(0, 3), sticky="nsew")
+        ctr_right.grid_rowconfigure(1, weight=1)
+        ctr_right.grid_columnconfigure(0, weight=1)
 
         # File list in directory folder (center-left)
         global path
@@ -104,13 +120,13 @@ class PageOne(tk.Frame):
         Resource_Step1.org_path = org_path
         System_Step1.org_path = org_path
         PageThree.org_path =org_path
-        os.chdir("".join([str(org_path), "\\input"]))
+        os.chdir(os.sep.join([str(org_path), "input"]))
         input_path = os.getcwd()
 
         ctr_left_label1 = Label(ctr_left, text='Files', font=("Consolas", 10, 'bold'),
                                 fg="white", bg='gray25', anchor="center", relief="raised")
-        ctr_left_label1.grid(row=0, column=0, sticky="w")
-        ctr_left_label1.config(width=25)
+        ctr_left_label1.grid(row=0, column=0, sticky="we")
+        # ctr_left_label1.config(width=25)
 
         dir_scroll = ScrolledText(ctr_left, width=24, height=2, wrap=tk.WORD)
         dir_scroll.grid(row=1, column=0, rowspan=4)
@@ -133,7 +149,7 @@ class PageOne(tk.Frame):
                 autodetection()
             if alert_value == 0:
                 alert_message1 = "Nothing was checked"
-            messagebox.showinfo("Button Clicked", alert_message1)
+            messagebox.showinfo("Message", alert_message1)
 
         # autodetection: automatically set key attributes (center-right)
         def autodetection():
@@ -224,7 +240,7 @@ class PageOne(tk.Frame):
             mylist.insert(tk.CURRENT, event_log[1:20].to_string(index=False))
 
         ctr_left_label2 = LabelFrame(ctr_left, text="csv_list (max=10)", font=("Consolas", 10, 'bold'),
-                                     fg="white", bg='gray1', bd=3, height=237)
+                                     fg="white", bg='gray1', bd=3, height=248)
         ctr_left_label2.grid(row=12, sticky="we", padx=5, pady=(7, 0), ipadx=0, ipady=0)
         ctr_left_label2.grid_propagate(False)
         style1 = ttk.Style()
@@ -238,16 +254,20 @@ class PageOne(tk.Frame):
             globals()['c{}'.format(i)].grid(column=0, row=i + 10, sticky='w')
             globals()['c{}'.format(i)].configure(style="Red.TCheckbutton")
             i = i + 1
-        action = tk.Button(ctr_left, text="Load", padx=25, command=selectdata)
-        action.place(x=50, y=322)
+        action = tk.Button(ctr_left, text="Load",  width = 10, command=selectdata)
+        action.grid(row=13,  sticky="we" , padx =60 ,pady= (7,10))
 
         # Select key attribute (center-right)
         ctr_right_label1 = Label(ctr_right, text='Environment', font=("Consolas", 10, 'bold'),
-                                 fg="white", bg='gray25', anchor="center", relief="raised", padx=50)
-        ctr_right_label1.grid(row=0, column=0, columnspan=3, sticky="we")
-        ctr_right_label1.config(width=45)
+                                 fg="white", bg='gray25',  relief="raised")
+        ctr_right_label1.grid(row=0, column=0, sticky="nsew")
+        # ctr_right_label1.config(width=45)
 
-        ctr_right_label2 = LabelFrame(ctr_right, text="Set key attributes", font=("Consolas", 10, 'bold'),
+        ctr_right_sub = Frame(ctr_right, bg='gray1', height=190, highlightthickness=1, highlightbackground="gray15")
+        ctr_right_sub.grid(row=1, column=0, sticky="nsew")
+
+
+        ctr_right_label2 = LabelFrame(ctr_right_sub, text="Set key attributes", font=("Consolas", 10, 'bold'),
                                       fg="white", bg='gray1', bd=3, padx=14, pady=7)
         ctr_right_label2.grid(row=1, sticky="w", padx=14, pady=(7, 0))
 
@@ -304,7 +324,7 @@ class PageOne(tk.Frame):
         timeform_value_chosen.bind("<<ComboboxSelected>>", TextBoxUpdate)
 
         # Scrollbar to represent dataframe (center-left)
-        ctr_right_label3 = LabelFrame(ctr_right, text="Data frame (maximum 20 rows)", font=("Consolas", 10, 'bold'),
+        ctr_right_label3 = LabelFrame(ctr_right_sub, text="Data frame (maximum 20 rows)", font=("Consolas", 10, 'bold'),
                                       fg="white", bg='gray1', bd=3, padx=12, width=400, height=135, pady=7)
         ctr_right_label3.grid(row=3, sticky="w", padx=14, pady=(14, 0))
 
@@ -315,8 +335,7 @@ class PageOne(tk.Frame):
         hscroll = Scrollbar(ctr_right_label3, orient=HORIZONTAL, command=mylist.xview)
         hscroll.place(in_=mylist, rely=1.0, relwidth=1.0, bordermode="outside")
         mylist['xscroll'] = hscroll.set
-        mylist.place(x=0, y=0)
-
+        mylist.grid(row=0, column=0, padx=(0,20), pady=(0,30))
         global n
         n = 0
 
@@ -374,22 +393,23 @@ class PageOne(tk.Frame):
                         if "\"" in form or "\'" in form:
                             words = ["Type timestamp format without", "\'", "or", "\""]
                             words = " ".join(words)
-                            messagebox.showinfo("format", words)
-                        else: messagebox.showinfo("format", "Wrong input for timestamp format: use format in 'datetime' packages. (ex: %Y-%m-%d %H:%M:%S)")
+                            messagebox.showinfo("Error", words)
+                        else: messagebox.showinfo("Error", "Wrong input for timestamp format: use format in 'datetime' packages. (ex: %Y-%m-%d %H:%M:%S)")
                     else:
                         time = extracted_data['Timestamp'].apply(lambda x: dt.strptime(x, form))
                         unixtime = time.apply(lambda x: (x - dt(1970, 1, 1)).total_seconds())
                         extracted_data['Timestamp'] = time
                         extracted_data['unixtime'] = unixtime
                         PageTwo.extracted_data = extracted_data
-                        messagebox.showinfo("Error", "Loaded")
-                        controller.show_frame1(PageTwo)
+                        messagebox.showinfo("Message", "Loaded")
+                        tk.Frame.grid_forget()
+                        parent.show_frame1()
 
 
                 if timeform_value_chosen.get() in form_dict.keys():
                     form = form_dict[timeform_value_chosen.get()]
                     if iserror(dt.strptime, extracted_data['Timestamp'][0], form):
-                        messagebox.showinfo("format",
+                        messagebox.showinfo("Error",
                                             "{0} is not matched with {1}".format(extracted_data['Timestamp'][0], form))
                     else:
                         time = extracted_data['Timestamp'].apply(lambda x: dt.strptime(x, form))
@@ -397,15 +417,15 @@ class PageOne(tk.Frame):
                         extracted_data['Timestamp'] = time
                         extracted_data['unixtime'] = unixtime
                         PageTwo.extracted_data = extracted_data
-                        messagebox.showinfo("Error", "Loaded")
-                        controller.show_frame1(PageTwo)
+                        messagebox.showinfo("Message", "Loaded")
+                        parent.show_frame1()
 
             else:
                 messagebox.showinfo("Error", "Error")
 
-        button1 = tk.Button(ctr_right, text="Next", padx=25,
+        button1 = tk.Button(ctr_right_sub, text="Next", width=10,
                             command= save_key_attributes)
-        button1.place(x=330, y=322)
+        button1.grid(row=4, padx=(0,20), pady=(7,10), sticky = 'e')
 
 
 app = GridTest()

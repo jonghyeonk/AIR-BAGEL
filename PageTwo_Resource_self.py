@@ -31,8 +31,6 @@ class Resource_step1_self(tk.Toplevel):
 
     def __init__(self, root, parent, *args, **kwargs):
         self.root = root
-        self.root.geometry("715x450")
-        self.root.resizable(False, False)
         self.root.rowconfigure(0, weight=1)
         self.root.columnconfigure(0, weight=1)
         self.root["bg"] = 'dark slate gray'
@@ -42,14 +40,19 @@ class Resource_step1_self(tk.Toplevel):
         Resource_step1_self.root= root
         # Create main containers
         base_frame = Frame(root, bg='gray1', width=250, height=200)
-        base_frame.grid(row=0, column=0, pady=(0, 7), sticky="nsew")
+        base_frame.grid(row=0, column=0,  sticky="nsew")
+        base_frame.grid_rowconfigure(1, weight=1)
+        base_frame.grid_columnconfigure(0, weight=1)
+
+        center = Frame(root, bg='gray1')
+        center.grid(row=1, column=0, sticky="nsew")
 
         # title label (top)
         base_frame_label1 = Label(base_frame, text='Connection between Resource & Activity',
                                   font=("Consolas", 10, 'bold'),
                                   fg="white", bg='gray25', anchor="center", relief="raised")
-        base_frame_label1.grid(row=0, column=0, sticky="w")
-        base_frame_label1.config(width=100)
+        base_frame_label1.grid(row=0, column=0, columnspan=3,sticky="nsew")
+
 
         # Resource info (center-top)
 
@@ -61,23 +64,22 @@ class Resource_step1_self(tk.Toplevel):
         activitylist = self.extracted_data.groupby('Activity').agg(params).reset_index()
         resource_info_frame1 = LabelFrame(base_frame, text="The number of activities ={}".format(len(activitylist)),
                                         font=("Consolas", 10, 'bold'),
-                                        fg="white", bg='gray1', bd=3, padx=12, width=700, height=310, pady=7)
-        resource_info_frame1.place(x=10, y=30)
+                                        fg="white", bg='gray1', bd=3)
+        resource_info_frame1.grid(row=1, column=0, sticky="nw", padx=10, pady=7)
 
         # Select resource attribute (center-top)
         self.cVar1 = IntVar()
         s = ttk.Style()
         s.configure('Red.TCheckbutton', foreground="aquamarine", background='gray1')
         sub_frame0 = Frame(resource_info_frame1, bg='gray1', width=600)
-        sub_frame0.grid(row=0, column=0, sticky='w')
+        sub_frame0.grid(row=0, column=0, pady=(0,3), sticky='w')
         sub_frame0_label1 = ttk.Checkbutton(sub_frame0, text="Select a resource attribute from existing dataframe: ",
-                                            variable=self.cVar1, width=8,
+                                            variable=self.cVar1,
                                             onvalue=1, style='Red.TCheckbutton')
         sub_frame0_label1.grid(row=0, column=0, sticky="w", padx=(0, 1))
-        sub_frame0_label1.config(width=55)
 
         resource_chosen = ttk.Combobox(sub_frame0, width=15, textvariable=tk.StringVar())
-        resource_chosen.grid(row=0, column=1)
+        resource_chosen.grid(row=0, column=1, padx=(0,10))
         resource_chosen['values'] = list(self.event_log)  # original data without any preprocessing
 
         # Auto detection of resource
@@ -100,12 +102,18 @@ class Resource_step1_self(tk.Toplevel):
 
         sub_frame2_label1_1 = Label(sub_frame1, text='the number of groups =', font=("Consolas", 10, 'bold'),
                                     fg="white", bg='gray1', anchor="w")
-        sub_frame2_label1_1.grid(row=0, column=1, pady=(3, 0), sticky="w")
+        sub_frame2_label1_1.grid(row=0, column=1, pady=(4, 0), padx=2)
 
         textBox1 = Text(sub_frame1, height=1, width=4)
-        textBox1.grid(row=0, column=2, pady=(3, 0), sticky="w")
+        textBox1.grid(row=0, column=2, padx=(0,10) ,pady=(4,0))
         textBox1.configure(state="normal", background="white")
 
+        def iserror(func, *args):
+            try:
+                func(*args)
+                return False
+            except Exception:
+                return True
 
         def set_res_attribute():
             if self.cVar1.get() == 1:
@@ -149,26 +157,30 @@ class Resource_step1_self(tk.Toplevel):
                 Resource_step1_self.frame_buttons1.update_idletasks()
                 Resource_step1_self.canvas_failure.config(scrollregion=Resource_step1_self.canvas_failure.bbox("all"))
                 Resource_step1_self.root.update()
-
             elif self.cVar1.get() == 2:
-                Resource_self_sub.ngroup = textBox1.get("1.0", "end-1c")
-                self.new_window(root2, parent, Resource_self_sub)
+                if iserror(int, textBox1.get("1.0", "end-1c")):
+                    messagebox.showinfo("Error", "Input integer in number of resource groups!")
+                elif int(textBox1.get("1.0", "end-1c"))>0:
+                    Resource_self_sub.ngroup = textBox1.get("1.0", "end-1c")
+                    self.new_window(root2, parent, Resource_self_sub)
+                else:
+                    messagebox.showinfo("Error", "Input number of resource groups over than 0!")
             elif self.cVar1.get() < 1:
-                messagebox.showinfo("Button Clicked", "Nothing was checked")
+                messagebox.showinfo("Error", "Nothing was checked")
                 root.attributes('-topmost', 1)
                 root.attributes('-topmost', 0)
 
-        action1 = tk.Button(sub_frame1, text="Set", padx=20, command = set_res_attribute)
-        action1.grid(row=0, column=3, padx=(50,0), pady=(10,0))
+        action1 = tk.Button(resource_info_frame1, text="Set", width=8, command = set_res_attribute)
+        action1.grid(row=2, column=0, padx=(0,10), pady=8, sticky='e')
 
 
         # Res info (left)
-        res_info_frame2 = LabelFrame(base_frame ,text="Resource list", font=("Consolas", 10, 'bold'),
-                                     fg="white", bg='gray1', bd=3, padx=12 ,width=385 ,height=252, pady=7)
-        res_info_frame2.place(x=10 ,y=130)
+        res_info_frame2 = LabelFrame(center ,text="Resource list", font=("Consolas", 10, 'bold'),
+                                     fg="white", bg='gray1', bd=3)
+        res_info_frame2.grid(row=0, column=0, sticky = 'nw', padx=10, pady=7)
         Resource_step1_self.res_info_frame2 = res_info_frame2
 
-        mylist1= Text(res_info_frame2, width=45 ,height=13, wrap=NONE)
+        mylist1= Text(res_info_frame2, width=45 ,height=14, wrap=NONE)
         vscroll1= Scrollbar(res_info_frame2, orient=VERTICAL ,command=mylist1.yview)
         vscroll1.place(in_=mylist1, relx=1.0, relheight=1.0, bordermode="outside")
         mylist1['yscroll'] = vscroll1.set
@@ -176,17 +188,17 @@ class Resource_step1_self(tk.Toplevel):
         hscroll1= Scrollbar(res_info_frame2, orient=HORIZONTAL ,command=mylist1.xview)
         hscroll1.place(in_=mylist1, rely=1.0, relwidth=1.0, bordermode="outside")
         mylist1['xscroll'] = hscroll1.set
-        mylist1.place(x=10 ,y=10)
+        mylist1.grid(row=0, column=0, padx=(10,20), pady=(10,30))
         Resource_step1_self.mylist1 = mylist1
 
         pd.set_option('display.width' ,1000)
         pd.options.display.max_colwidth = 200
 
         # Resource failure rate (right)
-        base_frame_label1 = LabelFrame(base_frame, text="Set failure rate for each resource",
+        base_frame_label1 = LabelFrame(center, text="Set failure rate for each resource",
                                        font=("Consolas", 10, 'bold'),
-                                       fg="white", bg='gray1', bd=3, padx=14, pady=7, width=385 ,height=245)
-        base_frame_label1.place(x=410, y=130)
+                                       fg="white", bg='gray1', bd=3)
+        base_frame_label1.grid(row=0, column=1, sticky= 'nws',padx=10, pady=7)
         sub_frame2 = Frame(base_frame_label1, bg='gray1')
         sub_frame2.grid(row=0, column=0, sticky='w')
 
@@ -205,8 +217,8 @@ class Resource_step1_self(tk.Toplevel):
         canvas_failure.create_window((0, 0), window=Resource_step1_self.frame_buttons1, anchor='nw')
 
         # Set seed
-        seed_frame1 = Frame(base_frame, bg='gray30', relief = 'ridge', borderwidth = 2, width=15)
-        seed_frame1.place(x=440, y=395)
+        seed_frame1 = Frame(center, bg='gray30', relief = 'ridge', borderwidth = 2, width=15)
+        seed_frame1.grid(row=1, column=1, sticky='e', padx=(0,10))
         seed_Label = Label(seed_frame1, text="(Optional) Seed = ",
                                 fg="white", bg='gray30', anchor="w")
         seed_Label.grid(row=0, column=0, sticky='w')
@@ -237,11 +249,11 @@ class Resource_step1_self(tk.Toplevel):
             extracted_data2['Resource_Pass/Fail'] = PF
             extracted_data3 = extracted_data2
             Inject_Anomaly.extracted_data2 = extracted_data3    # Dataset with resource anomaly
-            messagebox.showinfo("Button Clicked2", "Completed: parameters on resource root have been defined")
+            messagebox.showinfo("Message", "Completed: parameters on resource root have been defined")
             root.destroy()
 
-        action3 = tk.Button(base_frame, text="Apply", padx=20, command=passfail)
-        action3.place(x=600, y=395)
+        action3 = tk.Button(center, text="Apply", width=10, command=passfail)
+        action3.grid(row=2, column=1, sticky='e', padx=(0,10), pady=10)
 
 
 
@@ -255,7 +267,6 @@ class Resource_self_sub(tk.Toplevel):    # resource- failure rate
     def __init__(self, root, root2  ,*args, **kwargs):
         self.root2= root2
         self.root = root
-        self.root.geometry("721x396")
         self.root.rowconfigure(0, weight=1)
         self.root.columnconfigure(0, weight=1)
         self.root["bg"] = 'dark slate gray'
@@ -264,13 +275,15 @@ class Resource_self_sub(tk.Toplevel):    # resource- failure rate
 
         # Create main containers
         base_frame = Frame(root, bg='gray1')
-        base_frame.grid(row=0, column=0, pady=(0, 7), sticky="nsew")
-
+        base_frame.grid(row=0, column=0, sticky="nsew")
+        base_frame.grid_rowconfigure(1, weight=1)
+        base_frame.grid_columnconfigure(0, weight=1)
         # title label (top)
         base_frame_label1 = Label(base_frame, text='Connection between Resource group & Activity', font=("Consolas", 10, 'bold'),
-                                  fg="white", bg='gray25' ,anchor="center", relief="raised")
-        base_frame_label1.grid(row=0, column=0, columnspan =2 , pady= (0,14), sticky="w")
-        base_frame_label1.config(width=100)
+                                  fg="white", bg='gray25' ,relief="raised")
+        base_frame_label1.grid(row=0, column=0 , columnspan =3, sticky="nsew")
+        base_frame_label1.grid_rowconfigure(1, weight=1)
+        base_frame_label1.grid_columnconfigure(0, weight=1)
 
         # System info (center-top)
 
@@ -281,12 +294,12 @@ class Resource_self_sub(tk.Toplevel):    # resource- failure rate
         }
         activitylist = self.extracted_data.groupby('Activity').agg(params).reset_index()
         resource_info_frame1 = LabelFrame(base_frame, text="The number of groups ={}".format(self.ngroup), font=("Consolas", 10, 'bold'),
-                                          fg="white", bg='gray1', bd=3, padx=12 , pady=7)
-        resource_info_frame1.grid(row=1, column=0)
+                                          fg="white", bg='gray1', bd=3)
+        resource_info_frame1.grid(row=1, column=0, sticky='nsw', padx=10)
 
         #
         sub_frame2 = Frame(resource_info_frame1, bg='gray1')
-        sub_frame2.grid(row=0, column=0, sticky='w')
+        sub_frame2.grid(row=0, column=0, sticky='w', pady=10)
 
         sub_frame2.rowconfigure(0, weight=1)
         sub_frame2.columnconfigure(0, weight=1)
@@ -320,10 +333,10 @@ class Resource_self_sub(tk.Toplevel):    # resource- failure rate
         # Resource group - activity connection (Right)
         base_frame_label2 = LabelFrame(base_frame, text="Allocate resource groups on each activity", font=("Consolas", 10, 'bold'),
                                        fg="white", bg='gray1', bd=3, padx=14, pady=7)
-        base_frame_label2.grid(row=1, column=1)
+        base_frame_label2.grid(row=1, column=1, sticky='nwse',padx=10)
 
         sub_frame3 =Frame(base_frame_label2, bg='gray1')
-        sub_frame3.grid(row=0, column=0, sticky='w')
+        sub_frame3.grid(row=0, column=0, sticky='nwse', pady=10)
 
         sub_frame3.rowconfigure(0, weight=1)
         sub_frame3.columnconfigure(0, weight=1)
@@ -409,9 +422,9 @@ class Resource_self_sub(tk.Toplevel):    # resource- failure rate
 
             Resource_step1_self.root.update()
             Inject_Anomaly.data_with_resource = extracted_data4
-            messagebox.showinfo("Successfully proceeded", "Successfully proceeded")
+            messagebox.showinfo("Message", "Successfully proceeded")
             root.destroy()
             self.root2.lift()
 
-        action_res1 = tk.Button(base_frame, text="Apply", padx=25, command= lambda: attach_res(activitylist))
-        action_res1.place(x=600, y=344)
+        action_res1 = tk.Button(base_frame, text="Apply", width=10, command= lambda: attach_res(activitylist))
+        action_res1.grid(row=2, column=1, sticky = 'e', padx= (0,20), pady=10)

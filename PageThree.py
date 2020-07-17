@@ -30,13 +30,13 @@ class PageThree(tk.Frame):
         frame = self
         frame.tkraise()
 
-    def __init__(self, parent, controller):
+    def __init__(self, parent):
         tk.Frame.__init__(self, parent, bg='dark slate gray')
 
         top_frame = Frame(self, bg='dark slate gray', width=300, height=50, padx= 5, pady=3)
         center = Frame(self, bg='dark slate gray', width=50, height=40, padx= 5, pady=3)
 
-        os.chdir("".join([str(self.org_path), "\\output"]))
+        os.chdir(os.sep.join([str(self.org_path), "output"]))
 
         # layout all of the main containers
         self.grid_rowconfigure(1, weight=1)
@@ -53,11 +53,14 @@ class PageThree(tk.Frame):
         top_mid = Frame(top_frame, bg='gray25', height=48, highlightbackground="gray15",
                         highlightthickness=1)
         top_mid.grid(row=0, column=1, pady=(2, 0), sticky="nsew")
+        top_mid.grid_rowconfigure(1, weight=1)
+        top_mid.grid_columnconfigure(0, weight=1)
 
-        top_mid_label1 = Label(top_mid, text='(3) Result', font=("Consolas", 13, 'bold'),
-                               fg="white", bg='gray25', anchor="center", width=99)
-        # top_mid_label1.grid_columnconfigure(0, weight=1)
-        top_mid_label1.grid(row=0, column=0, sticky="w")
+        top_mid_label1 = Label(top_mid, text='(4) Output evaluation', font=("Consolas", 13, 'bold'),
+                               fg="white", bg='gray25', anchor="center", relief = "raised")
+        top_mid_label1.grid(row=0, column=0, sticky="nsew")
+        top_mid_label1.grid_rowconfigure(1, weight=1)
+        top_mid_label1.grid_columnconfigure(0, weight=1)
 
         # create the center widgets
         ctr_mid = Frame(center, bg='gray1', width=900, height=425)
@@ -66,7 +69,7 @@ class PageThree(tk.Frame):
         # center-left : statistics
         ctr_mid_label1 = LabelFrame(ctr_mid, text=" Anomaly frequency ", font=("Consolas", 10, 'bold'),
                                     fg="white", bg='gray1', bd=3, padx=14, pady=7)
-        ctr_mid_label1.place(x=20, y=10)
+        ctr_mid_label1.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
 
         ctr_mid_subframe1 = Frame(ctr_mid_label1, bg='gray1', width=505, height=48, padx=3, pady=0,
                                   highlightbackground="gray15",
@@ -148,7 +151,7 @@ class PageThree(tk.Frame):
 
             ctr_mid_label3 = LabelFrame(ctr_mid, text=" Root information ", font=("Consolas", 10, 'bold'),
                                         fg="white", bg='gray1', bd=3, padx=14, pady=7)
-            ctr_mid_label3.place(x=460, y=10)
+            ctr_mid_label3.grid(row=0, column=1, sticky="nsew", padx=10, pady=10)
 
             ctr_mid_subframe3 = Frame(ctr_mid_label3, bg='gray1', width=505, height=48, padx=3, pady=0,
                                       highlightbackground="gray15",
@@ -425,7 +428,7 @@ class PageThree(tk.Frame):
 
             ctr_mid_label3 = LabelFrame(ctr_mid, text=" Root information ", font=("Consolas", 10, 'bold'),
                                         fg="white", bg='gray1', bd=3, padx=14, pady=7)
-            ctr_mid_label3.place(x=460, y=10)
+            ctr_mid_label3.grid(row=0, column=1, sticky="nsew", padx=10, pady=10)
 
             ctr_mid_subframe3 = Frame(ctr_mid_label3, bg='gray1', width=505, height=48, padx=3, pady=0,
                                       highlightbackground="gray15",
@@ -539,7 +542,7 @@ class PageThree(tk.Frame):
 
         ctr_mid_label2 = LabelFrame(ctr_mid, text=" Process Map (Inductive Miner) ", font=("Consolas", 10, 'bold'),
                                     fg="white", bg='gray1', bd=3, padx=14, pady=7)
-        ctr_mid_label2.place(x=20, y=290)
+        ctr_mid_label2.grid(row=1, column=0, sticky="nsew", padx=10, pady=10)
 
         ctr_mid_subframe2 = Frame(ctr_mid_label2, bg='gray1', width=950, height=48, padx=3, pady=0,
                                   highlightbackground="gray15",
@@ -616,7 +619,7 @@ class PageThree(tk.Frame):
         def function_before_get(b_click):
             if b_click ==1 :
                 pn_vis_factory.save(before_gviz, "clean_process.png")
-                messagebox.showinfo("before_png", "Downloaded in 'output' folder")
+                messagebox.showinfo("Message", "Downloaded in 'output' folder")
 
             else:
                 before = self.before
@@ -638,7 +641,7 @@ class PageThree(tk.Frame):
                 before_gviz = vis_factory.apply(b_net, b_initial_marking, b_final_marking)
                 b_click = 1
                 pn_vis_factory.save(before_gviz, "clean_process.png")
-                messagebox.showinfo("before_png", "Downloaded in 'output' folder")
+                messagebox.showinfo("Message", "Downloaded in 'output' folder")
 
                 
             return b_click
@@ -647,7 +650,7 @@ class PageThree(tk.Frame):
         def function_after_get(a_click):
             if a_click == 1:
                 pn_vis_factory.save(after_gviz, "anomaly_process.png")
-                messagebox.showinfo("after_png", "Downloaded in 'output' folder")
+                messagebox.showinfo("Message", "Downloaded in 'output' folder")
 
             else:
                 after = self.after
@@ -669,7 +672,7 @@ class PageThree(tk.Frame):
                 after_gviz = vis_factory.apply(a_net, a_initial_marking, a_final_marking)
                 a_click = 1
                 pn_vis_factory.save(after_gviz, "anomaly_process.png")
-                messagebox.showinfo("after_png", "Downloaded in 'output' folder")
+                messagebox.showinfo("Message", "Downloaded in 'output' folder")
 
             return a_click
 
@@ -691,7 +694,7 @@ class PageThree(tk.Frame):
 
         ctr_mid_label4 = LabelFrame(ctr_mid, text=" Export csv file ", font=("Consolas", 10, 'bold'),
                                     fg="white", bg='gray1', bd=3, padx=14, pady=7)
-        ctr_mid_label4.place(x=460, y=290)
+        ctr_mid_label4.grid(row=1, column=1, sticky="nsew", padx=10, pady=10)
 
         ctr_mid_subframe4 = Frame(ctr_mid_label4, bg='gray1', width=950, height=48, pady=0,
                                   highlightbackground="gray15",
@@ -713,16 +716,13 @@ class PageThree(tk.Frame):
         # button_before_a.grid(row=0, column=1, padx=(25,0), sticky='w')
 
         button_after_a = tk.Button(ctr_mid_subframe4, text="Download",width=10, command= lambda: [self.after.to_csv("data_with_anomalies.csv", mode='w', index=False),
-                                                                                                  messagebox.showinfo("csv","Downloaded in 'output' folder")])
+                                                                                                  messagebox.showinfo("Message","Downloaded in 'output' folder")])
         button_after_a.grid(row=0, column=1, padx=(25,0), sticky='w')
 
 
-
-        # button1 = tk.Button(center, text="Previous", padx=25,
-        #                     command=lambda: controller.show_frame1(self.PageTwo))
-        def next():
-            self.destroy()
-        button1 = tk.Button(center, text="Close", padx=25,
-                            command=next)
-        button1.place(x=760, y=390)
+        def close():
+            parent.destroy()
+        button1 = tk.Button(ctr_mid, text="Close", padx=25,
+                            command=close)
+        button1.grid(row=2, column=1, sticky="e", padx=10, pady=10)
         self.update()
