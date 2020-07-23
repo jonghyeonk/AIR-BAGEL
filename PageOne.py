@@ -141,6 +141,9 @@ class PageOne(tk.Frame):
             alert_message1 = ''
             if self.cVar1.get() > 0:
                 event_log = pd.read_csv(csv_list[int(self.cVar1.get()) - 1])
+                dat_name = str(csv_list[int(self.cVar1.get()) - 1])
+                dat_name = str(dat_name.split('.')[0])
+                PageThree.dat_name=dat_name
                 alert_value += 1
                 alert_message1 = 'Completely loaded: {}'.format(csv_list[int(self.cVar1.get()) - 1])
                 PageTwo.event_log = event_log       #orginal data without preprocessing

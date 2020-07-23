@@ -648,7 +648,7 @@ class PageThree(tk.Frame):
                 b_net, b_initial_marking, b_final_marking = inductive_miner.apply(before_log)
                 before_gviz = vis_factory.apply(b_net, b_initial_marking, b_final_marking)
                 b_click = 1
-                pn_vis_factory.save(before_gviz, "clean_process.png")
+                pn_vis_factory.save(before_gviz, "{}_clean_process.png".format(self.dat_name))
                 messagebox.showinfo("Message", "Downloaded in 'output' folder")
 
                 
@@ -679,7 +679,7 @@ class PageThree(tk.Frame):
                 a_net, a_initial_marking, a_final_marking = inductive_miner.apply(after_log)
                 after_gviz = vis_factory.apply(a_net, a_initial_marking, a_final_marking)
                 a_click = 1
-                pn_vis_factory.save(after_gviz, "anomaly_process.png")
+                pn_vis_factory.save(after_gviz, "{}_anomaly_process.png".format(self.dat_name))
                 messagebox.showinfo("Message", "Downloaded in 'output' folder")
 
             return a_click
@@ -723,7 +723,7 @@ class PageThree(tk.Frame):
         # button_before_a = tk.Button(ctr_mid_subframe4, text="Download", width=10,  command= lambda: before_gviz.view())
         # button_before_a.grid(row=0, column=1, padx=(25,0), sticky='w')
 
-        button_after_a = tk.Button(ctr_mid_subframe4, text="Download",width=10, command= lambda: [self.after.to_csv("data_with_anomalies.csv", mode='w', index=False),
+        button_after_a = tk.Button(ctr_mid_subframe4, text="Download",width=10, command= lambda: [self.after.to_csv("{}_with_anomalies.csv".format(self.dat_name), mode='w', index=False),
                                                                                                   messagebox.showinfo("Message","Downloaded in 'output' folder")])
         button_after_a.grid(row=0, column=1, padx=(25,0), sticky='w')
 
