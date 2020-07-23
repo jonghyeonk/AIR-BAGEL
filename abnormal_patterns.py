@@ -260,7 +260,6 @@ class Abnorm_p():
         act_c = act_c.apply(lambda x: list(set(act_a) - set(x)))
         list_insert_i = list(df_new.index[(df_new["type"] == "insert") & (df_new["cusum"] == 1)])
         list_insert_c = df_new.loc[list_insert_i]
-        df_new = df_new.drop(list_insert_i)
         list_insert = np.repeat(a=list_insert_c.values, repeats=list_insert_c["parameter"].astype("int"), axis=0)
         list_insert = pd.DataFrame(list_insert, columns=col)
         list_insert["duration"] = list_insert.apply(lambda x: random.randrange(0, x["duration"] + 1), axis=1)
@@ -449,7 +448,7 @@ class Abnorm_p():
         df_new["trace_temp"] = np.where(df_new["order"] != df_new["order_b"], 1, 0)
         df_new["trace_change_resource"] = df_new.groupby(["Case"])["trace_temp"].transform("max")
         df_new["trace_change_resource"] = np.where((df_new["resource_anomaly_type"] == "skip") | (df_new["resource_anomaly_type"] == "switch_from") | (df_new["resource_anomaly_type"] == "switch_to") | (df_new["resource_anomaly_type"] == "incomplete") | (df_new["resource_anomaly_type"] == "replace"), 1, df_new["trace_change_resource"])
-        df_new = df_new[["Case", "Event", "Activity", "Timestamp", "unixtime", "Resource", "Resource_failure_rate", "Resource_Pass/Fail", "order", "resource_anomaly_type", "resource_parameter", "trace_change_resource"]]
+        df_new = df_new[["Case", "Event", "Activity", "Timestamp", "Resource", "Resource_failure_rate", "Resource_Pass/Fail", "order", "resource_anomaly_type", "resource_parameter", "trace_change_resource"]]
         end_inject = datetime.datetime.now()
         Inject_Anomaly.text_progress.insert(tk.END, "<Resource> Finished to inject anomaly patterns (running time={0})\n".format(end_inject-start_inject))
         Inject_Anomaly.parent.update()
