@@ -32,7 +32,7 @@ class Abnorm_sys():
         return df
 
     # Preprocess: to make new attribute 'type' and 'parameter' value in system error data
-    def setting1_sys(self, df, mag, types, h_skip, h_form, h_cut):
+    def setting1_sys(self, df, mag, types):
 
         mag_c = []
         df["type"] = np.nan
@@ -40,7 +40,7 @@ class Abnorm_sys():
         df["down_start"] = np.nan
         df["down_start"] = df["Start_Timestamp"]
         df.drop(columns="Start_Timestamp")
-        df["down_finish"] = np.nan
+        df["down_finish"] = df["Finish_Timestamp"]
         df["unixtime"] = np.nan
         for i in range(len(mag)):
             if mag[i] != 0:
@@ -57,20 +57,6 @@ class Abnorm_sys():
             df["type"] = df["type"].apply(lambda x: random.choice(applied_patterns))
         df_new = pd.DataFrame.copy(df)
         df_new["unixtime"] = df_new["down_start"].apply(lambda x: (x - dt(1970, 1, 1)).total_seconds())
-        if "skip" in df_new["type"].unique():
-            df_new.loc[(df_new["type"] == "skip"), "parameter"] = df_new["parameter"].apply(lambda x: random.randint(0, h_skip))
-        else:
-            pass
-        if "form based" in df_new["type"].unique():
-            df_new.loc[(df_new["type"] == "form based"), "parameter"] = df_new["parameter"].apply(lambda x: random.randint(0, h_form))
-        else:
-            pass
-        if "cut" in df_new["type"].unique():
-            df_new.loc[(df_new["type"] == "cut"), "parameter"] = df_new["parameter"].apply(lambda x: random.randint(0, h_cut))
-        else:
-            pass
-        df_new["down_finish"] = df_new.apply(lambda x: x["unixtime"] + x["parameter"], axis=1)
-        df_new["down_finish"] = df_new["down_finish"].apply(lambda x: datetime.datetime.utcfromtimestamp(x))
         df_new.reset_index(drop=True, inplace=True)
         print("end setting1_sys")
         return df_new
@@ -153,7 +139,7 @@ class Abnorm_sys():
         return df_new
 
     # Implement functions and save result
-    def implement_sys(self, mag_sys, types_sys, h_skip, h_form, h_cut, df_log, df_sys): #df_log = event logs, df_sys = system error data
+    def implement_sys(self, mag_sys, types_sys,  df_log, df_sys): #df_log = event logs, df_sys = system error data
         if df_log is None:
             df_log = self.log_file
         else:
@@ -173,7 +159,7 @@ class Abnorm_sys():
         time.sleep(1)
         Inject_Anomaly.parent.update()
         start_parameter = datetime.datetime.now()
-        df_sys = self.setting1_sys(df_sys, mag_sys, types_sys, h_skip, h_form, h_cut)
+        df_sys = self.setting1_sys(df_sys, mag_sys, types_sys)
         df_new = self.setting2_sys(df_log, df_sys)
 
         df_sys["down_duration"] = df_sys.apply(lambda x: x["down_finish"] - x["down_start"], axis=1)
@@ -240,12 +226,12 @@ class Abnorm_sys():
 
         return df_new
 
-    def implement_sys_single(self, mag_sys, types_sys, h_skip, h_form, h_cut, df_log, df_sys):
-        df = self.implement_sys(mag_sys, types_sys, h_skip, h_form, h_cut, df_log, df_sys)
+    def implement_sys_single(self, mag_sys, types_sys,  df_log, df_sys):
+        df = self.implement_sys(mag_sys, types_sys,  df_log, df_sys)
         # df.to_csv("data_with_anomalies_sys.csv", mode="w", index=False)
         messagebox.showinfo("Successfully Applied", "Successfully Applied")
 
-    def implement_bind(self, types_sys, types_re, mag_sys, mag_re=[], m_skip=1, m_form=2, h_moved=1, m_switch=1, m_rework=1, m_replace=1, h_skip=0, h_form=0, h_cut=0):
+    def implement_bind(self, types_sys, types_re, mag_sys, mag_re=[], m_skip=1, m_form=2, h_moved=1, m_switch=1, m_rework=1, m_replace=1):
 
         df_old = self.old_file
         from abnormal_patterns import Abnorm_p
@@ -253,7 +239,12 @@ class Abnorm_sys():
         df_re = df_res.implement(types_re, mag_re, m_skip, m_form, h_moved, m_switch, m_rework, m_replace, df_res=df_old)
         df_re = pd.merge(df_re, self.dat, on="Activity")
         df_sys = Abnorm_sys(sys_file=self.sys_file, log_file=df_re, old_file=df_old)
-        df_new = df_sys.implement_sys(mag_sys, types_sys, h_skip, h_form, h_cut, df_log=df_re, df_sys=None)
+        df_new = df_sys.implement_sys(mag_sys, types_sys, df_log=df_re, df_sys=None)
+        from PageTwo_Inject_Anomaly import Inject_Anomaly
+        Inject_Anomaly.text_progress.insert(tk.END, "Concaterating dataset\n")
+        Inject_Anomaly.text_progress.see(tk.END)
+        Inject_Anomaly.parent.update()
+
         df_new["anomaly_type"] = np.nan
         df_new["anomaly_type"] = df_new.apply(lambda x:
                                               "{0}(res)".format(x["resource_anomaly_type"])

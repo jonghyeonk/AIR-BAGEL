@@ -113,6 +113,9 @@ class PageTwo(tk.Frame):
         Resource_Step1.firstpreprocess = self.firstpreprocess         #orginal data without preprocessing
         Resource_step1_self.firstpreprocess = self.firstpreprocess
         Resource_step1_self.extracted_data = self.extracted_data
+        System_Step1.firstpreprocess = self.firstpreprocess         #orginal data without preprocessing
+        System_step1_self.firstpreprocess = self.firstpreprocess
+
         self.ok=0
 
         s = ttk.Style()

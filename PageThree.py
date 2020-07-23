@@ -55,6 +55,8 @@ class PageThree(tk.Frame):
 
         top_frame.grid_rowconfigure(0, weight=1)
         top_frame.grid_columnconfigure(1, weight=1)
+        center.grid_rowconfigure(0, weight=1)
+        center.grid_columnconfigure(1, weight=1)
 
         top_mid = Frame(top_frame, bg='gray25', height=48, highlightbackground="gray15",
                         highlightthickness=1)

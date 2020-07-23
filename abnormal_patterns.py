@@ -112,7 +112,7 @@ class Abnorm_p():
         else:
             pass
         if "insert" in df_new["type"].unique():
-            df_new.loc[(df_new["Resource_Pass/Fail"] == 1) & (df_new["cusum"] == 1) & (df_new["type"] == "insert"), "parameter"] = 1 #df_new["parameter"].apply(lambda x: random.randint(1, m_insert))
+            df_new.loc[(df_new["Resource_Pass/Fail"] == 1) & (df_new["cusum"] == 1) & (df_new["type"] == "insert"), "parameter"] = df_new["parameter"].apply(lambda x: random.randint(1, m_insert))
         else:
             pass
         if "incomplete" in df_new["type"].unique():
@@ -137,9 +137,10 @@ class Abnorm_p():
         else:
             pass
         df_p = df_new.loc[(df_new["Resource_Pass/Fail"] == 1) & (df_new["cusum"] == 1) & (df_new["type"] is not np.nan)]
-        df_p["resource_parameter"] = df_p.apply(lambda x: "loc = {0}, len = {1}".format(x["order"], x["parameter"]), axis=1)
+        df_p["resource_parameter"] = df_p.apply(lambda x: "loc = {0}, len = {1}".format(x["order"], x["parameter"]) if x["resource_anomaly_type"] != "form based" else "loc = {0}, len = {1}".format(x["order"], x["parameter"]), axis=1)
         df_p = df_p[["Case", "resource_parameter"]]
         df_new = pd.merge(df_new, df_p, on="Case", how="outer")
+        df_new["Resource_Pass/Fail"] = df_new.apply(lambda x: 0 if (x["Resource_Pass/Fail"] == 1) & (x["cusum"] != 1) else x["Resource_Pass/Fail"], axis=1)
         df_new.reset_index(drop=True, inplace=True)
         global data_with_parameter_res
         data_with_parameter_res = df_new
@@ -186,11 +187,6 @@ class Abnorm_p():
         df_new.loc[list_form_1, "Timestamp_temp"] = list_form_2
         df_new.loc[list_form_1, "Timestamp_chg"] = 1
         df_new["Timestamp"] = df_new.apply(lambda x: x["Timestamp_temp"] if (x["resource_check2"] == 1) & (x["Timestamp_chg"] == 1) else x["Timestamp"], axis=1)
-        """for i in range(len(list_form_1)):
-            if df_new.loc[list_form_1[i], "resource_check2"] == 1:
-                df_new.loc[list_form_1[i], "Timestamp"] = list_form_2[i]
-            else:
-                pass"""
         df_new.drop(columns=["resource_check1", "resource_check2", "Timestamp_temp", "Timestamp_chg"])
         df_new = df_new.sort_values(by=["Case", "order"], ascending=[True, True])
         df_new.reset_index(drop=True, inplace=True)
@@ -216,7 +212,8 @@ class Abnorm_p():
     def moved(self, df):
 
         df_new = pd.DataFrame.copy(df)
-        df_new["resource_parameter"] = np.where(df_new["type"] == "moved", df_new.apply(lambda x: "eventID = {0}, duration = {1}".format(x["Event"], x["parameter"]), axis=1), np.nan)
+        df_new["resource_parameter"] = np.where(df_new["type"] == "moved", df_new.apply(lambda x: "eventID = {0}, duration = {1}".format(x["Event"], x["parameter"]), axis=1), df_new["resource_parameter"])
+        df_new["resource_parameter"] = np.where((df_new["type"] != "moved") & (df_new["resource_anomaly_type"] == "moved"), np.nan, df_new["resource_parameter"])
         moved_c = df_new[df_new["Resource_Pass/Fail"] == 0]
         moved_f = df_new[(df_new["Resource_Pass/Fail"] == 1) & (df_new["type"] == "moved")]
         moved_a = df_new[(df_new["Resource_Pass/Fail"] == 1) & (df_new["type"] != "moved")]
@@ -256,21 +253,21 @@ class Abnorm_p():
     def insert(self, df):
 
         df_new = pd.DataFrame.copy(df)
+        col = list(df_new.columns)
         act_a = list(df["Activity"].unique())
         act_c = df_new.groupby(["Case"])["Activity"].unique()
         act_r = df_new.groupby(["Activity"])["Resource"].unique()
         act_c = act_c.apply(lambda x: list(set(act_a) - set(x)))
         list_insert_i = list(df_new.index[(df_new["type"] == "insert") & (df_new["cusum"] == 1)])
         list_insert_c = df_new.loc[list_insert_i]
-
-        list_insert_c["duration"] = list_insert_c.apply(lambda x: random.randrange(0, x["duration"] + 1), axis=1)
-        list_insert_c["Activity"] = list_insert_c.apply(
-            lambda x: random.choice(act_c[x["Case"]]), axis=1)
-        list_insert_c["Resource"] = list_insert_c.apply(lambda x: random.choice(act_r[x["Activity"]]),
-                                                        axis=1)
-        list_insert_c["Timestamp"] = list_insert_c.apply(
-            lambda x: x["Timestamp"] + timedelta(seconds=x["duration"]), axis=1)
-        df_new = pd.concat([df_new, list_insert_c])
+        df_new = df_new.drop(list_insert_i)
+        list_insert = np.repeat(a=list_insert_c.values, repeats=list_insert_c["parameter"].astype("int"), axis=0)
+        list_insert = pd.DataFrame(list_insert, columns=col)
+        list_insert["duration"] = list_insert.apply(lambda x: random.randrange(0, x["duration"] + 1), axis=1)
+        list_insert["Activity"] = list_insert.apply(lambda x: random.choice(act_c[x["Case"]]), axis=1)
+        list_insert["Resource"] = list_insert.apply(lambda x: random.choice(act_r[x["Activity"]]), axis=1)
+        list_insert["Timestamp"] = list_insert.apply(lambda x: x["Timestamp"] + timedelta(seconds=x["duration"]), axis=1)
+        df_new = pd.concat([df_new, list_insert])
         df_new = df_new.sort_values(by=["Case", "order"], ascending=[True, True])
         df_new.reset_index(inplace=True, drop=True)
         return df_new
@@ -451,7 +448,7 @@ class Abnorm_p():
         df_new["duration"] = df_new.apply(lambda x: x["duration"].seconds, axis=1)
         df_new["trace_temp"] = np.where(df_new["order"] != df_new["order_b"], 1, 0)
         df_new["trace_change_resource"] = df_new.groupby(["Case"])["trace_temp"].transform("max")
-        df_new["trace_change_resource"] = np.where((df_new["resource_anomaly_type"] == "skip") | (df_new["resource_anomaly_type"] == "switch_from") | (df_new["resource_anomaly_type"] == "switch_to") | (df_new["resource_anomaly_type"] == "incomplete"), 1, df_new["trace_change_resource"])
+        df_new["trace_change_resource"] = np.where((df_new["resource_anomaly_type"] == "skip") | (df_new["resource_anomaly_type"] == "switch_from") | (df_new["resource_anomaly_type"] == "switch_to") | (df_new["resource_anomaly_type"] == "incomplete") | (df_new["resource_anomaly_type"] == "replace"), 1, df_new["trace_change_resource"])
         df_new = df_new[["Case", "Event", "Activity", "Timestamp", "unixtime", "Resource", "Resource_failure_rate", "Resource_Pass/Fail", "order", "resource_anomaly_type", "resource_parameter", "trace_change_resource"]]
         end_inject = datetime.datetime.now()
         Inject_Anomaly.text_progress.insert(tk.END, "<Resource> Finished to inject anomaly patterns (running time={0})\n".format(end_inject-start_inject))

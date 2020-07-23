@@ -15,7 +15,6 @@ import datetime
 
 # Pages
 from PageTwo_Inject_Anomaly import Inject_Anomaly
-from abnormal_patterns_sys import Abnorm_sys
 from PageThree import PageThree
 
 
@@ -62,11 +61,13 @@ class Resource_step1_self(tk.Toplevel):
             'Case': 'count'
         }
         activitylist = self.extracted_data.groupby('Activity').agg(params).reset_index()
-        resource_info_frame1 = LabelFrame(base_frame, text="The number of activities ={}".format(len(activitylist)),
+        resource_info_frame1 = LabelFrame(base_frame, text="(A) Set resource attribute",
                                         font=("Consolas", 10, 'bold'),
                                         fg="white", bg='gray1', bd=3)
-        resource_info_frame1.grid(row=1, column=0, sticky="nw", padx=10, pady=7)
+        resource_info_frame1.config(highlightbackground="dark orange", highlightcolor = "dark orange", highlightthickness=2)
 
+        resource_info_frame1.grid(row=1, column=0, sticky="nw", padx=10, pady=7)
+        Resource_step1_self.resource_info_frame1 = resource_info_frame1
         # Select resource attribute (center-top)
         self.cVar1 = IntVar()
         s = ttk.Style()
@@ -157,12 +158,16 @@ class Resource_step1_self(tk.Toplevel):
                 Resource_step1_self.frame_buttons1.update_idletasks()
                 Resource_step1_self.canvas_failure.config(scrollregion=Resource_step1_self.canvas_failure.bbox("all"))
                 Resource_step1_self.root.update()
+                resource_info_frame1.config(highlightbackground="gray1", highlightcolor = "gray1", highlightthickness=2)
+                base_frame_label1.config(highlightbackground="dark orange", highlightcolor = "dark orange", highlightthickness=2)
+
             elif self.cVar1.get() == 2:
                 if iserror(int, textBox1.get("1.0", "end-1c")):
                     messagebox.showinfo("Error", "Input integer in number of resource groups!")
                 elif int(textBox1.get("1.0", "end-1c"))>0:
                     Resource_self_sub.ngroup = textBox1.get("1.0", "end-1c")
                     self.new_window(root2, parent, Resource_self_sub)
+
                 else:
                     messagebox.showinfo("Error", "Input number of resource groups over than 0!")
             elif self.cVar1.get() < 1:
@@ -195,12 +200,14 @@ class Resource_step1_self(tk.Toplevel):
         pd.options.display.max_colwidth = 200
 
         # Resource failure rate (right)
-        base_frame_label1 = LabelFrame(center, text="Set failure rate for each resource",
+        base_frame_label1 = LabelFrame(center, text="(B) Set failure rate for each resource",
                                        font=("Consolas", 10, 'bold'),
                                        fg="white", bg='gray1', bd=3)
         base_frame_label1.grid(row=0, column=1, sticky= 'nws',padx=10, pady=7)
+        Resource_step1_self.base_frame_label1 = base_frame_label1
+
         sub_frame2 = Frame(base_frame_label1, bg='gray1')
-        sub_frame2.grid(row=0, column=0, sticky='w')
+        sub_frame2.grid(row=0, column=0, padx=10)
 
         sub_frame2.rowconfigure(0, weight=1)
         sub_frame2.columnconfigure(0, weight=1)
@@ -299,7 +306,7 @@ class Resource_self_sub(tk.Toplevel):    # resource- failure rate
 
         #
         sub_frame2 = Frame(resource_info_frame1, bg='gray1')
-        sub_frame2.grid(row=0, column=0, sticky='w', pady=10)
+        sub_frame2.grid(row=0, column=0, sticky='w', padx=10,pady=10)
 
         sub_frame2.rowconfigure(0, weight=1)
         sub_frame2.columnconfigure(0, weight=1)
@@ -336,7 +343,7 @@ class Resource_self_sub(tk.Toplevel):    # resource- failure rate
         base_frame_label2.grid(row=1, column=1, sticky='nwse',padx=10)
 
         sub_frame3 =Frame(base_frame_label2, bg='gray1')
-        sub_frame3.grid(row=0, column=0, sticky='nwse', pady=10)
+        sub_frame3.grid(row=0, column=0, sticky='nwse', padx=10,pady=10)
 
         sub_frame3.rowconfigure(0, weight=1)
         sub_frame3.columnconfigure(0, weight=1)
@@ -423,6 +430,10 @@ class Resource_self_sub(tk.Toplevel):    # resource- failure rate
             Resource_step1_self.root.update()
             Inject_Anomaly.data_with_resource = extracted_data4
             messagebox.showinfo("Message", "Successfully proceeded")
+            Resource_step1_self.resource_info_frame1.config(highlightbackground="gray1", highlightcolor="gray1",
+                                        highlightthickness=2)
+            Resource_step1_self.base_frame_label1.config(highlightbackground="dark orange", highlightcolor="dark orange",
+                                     highlightthickness=2)
             root.destroy()
             self.root2.lift()
 

@@ -51,8 +51,10 @@ class Resource_Step1(tk.Toplevel):    # resource- failure rate
         # Set resource attribute (Center-top)
         system_info_frame1 = LabelFrame(base_frame, text="(A) Set resource attribute", font=("Consolas", 10, 'bold'),
                                           fg="white", bg='gray1', bd=3)
-        system_info_frame1.grid(row=1, column=0, sticky="w", padx=5, pady=7)
+        system_info_frame1.config(highlightbackground="dark orange", highlightcolor = "dark orange", highlightthickness=2)
 
+        system_info_frame1.grid(row=1, column=0, sticky="w", padx=5, pady=7)
+        Resource_Step1.system_info_frame1=system_info_frame1
         self.cVar1 = IntVar()
         s = ttk.Style()
         s.configure('Red.TCheckbutton', foreground="aquamarine", background='gray1')
@@ -125,6 +127,9 @@ class Resource_Step1(tk.Toplevel):    # resource- failure rate
                 extracted_data2["Resource"] = dat_resource["Resource"]
                 self.extracted_data2= extracted_data2
                 PageThree.before = extracted_data2
+                system_info_frame1.config(highlightbackground="gray1", highlightcolor = "gray1", highlightthickness=2)
+                base_frame_label2.config(highlightbackground="dark orange", highlightcolor = "dark orange", highlightthickness=2)
+
 
             elif self.cVar1.get() == 2:
                 if iserror(int, textBox0.get("1.0", "end-1c")):
@@ -132,6 +137,7 @@ class Resource_Step1(tk.Toplevel):    # resource- failure rate
                 elif int(textBox0.get("1.0", "end-1c"))>0:
                     Resource_Step1_sub.ngroup = textBox0.get("1.0", "end-1c")
                     self.new_window(root2, parent, Resource_Step1_sub)
+
                 else:
                     messagebox.showinfo("Error", "Input number of resource groups over than 0!")
             elif self.cVar1.get() < 1:
@@ -169,7 +175,7 @@ class Resource_Step1(tk.Toplevel):    # resource- failure rate
         base_frame_label2 = LabelFrame(center ,text="(B) Sampling failure rate from chosen distribution ", font=("Consolas", 10, 'bold'),
                                        fg="white", bg='gray1', bd=3, padx=14, pady=7)
         base_frame_label2.grid(row=0, column=1, sticky= 'nw',padx=5, pady=7)
-
+        Resource_Step1.base_frame_label2= base_frame_label2
         # Set seed
         seed_frame1 = Frame(base_frame_label2, bg='gray30', relief = 'ridge', borderwidth = 2, width=15)
         seed_frame1.grid(row=0, column=0, padx=(0,3), pady=(0,5),stick='w')
@@ -343,6 +349,10 @@ class Resource_Step1(tk.Toplevel):    # resource- failure rate
                 mylist2.delete('1.0', END)
                 mylist2.insert(tk.CURRENT, resourcelist2[0:len(self.resourcelist)].to_string(index=False))
                 messagebox.showinfo("Message", "'Sampling from exp dist' applied. Check updated resource list.")
+                system_info_frame1.config(highlightbackground="gray1", highlightcolor = "gray1", highlightthickness=2)
+                base_frame_label2.config(highlightbackground="gray1", highlightcolor = "gray1", highlightthickness=2)
+                resource_info_frame1.config(highlightbackground="dark orange", highlightcolor = "dark orange", highlightthickness=2)
+
             elif a == 2:
                 if seedBox1.get("1.0", "end-1c") != '':
                     seed_value = int(seedBox1.get("1.0", "end-1c"))
@@ -356,6 +366,10 @@ class Resource_Step1(tk.Toplevel):    # resource- failure rate
                 mylist2.insert(tk.CURRENT, resourcelist2[0:len(self.resourcelist)].to_string(index=False))
                 messagebox.showinfo("Message",
                                     "'Sampling from normal dist' applied. Check updated resource list.")
+                system_info_frame1.config(highlightbackground="gray1", highlightcolor = "gray1", highlightthickness=2)
+                base_frame_label2.config(highlightbackground="gray1", highlightcolor = "gray1", highlightthickness=2)
+                resource_info_frame1.config(highlightbackground="dark orange", highlightcolor = "dark orange", highlightthickness=2)
+
             elif a == 3:
                 if seedBox1.get("1.0", "end-1c") != '':
                     seed_value = int(seedBox1.get("1.0", "end-1c"))
@@ -364,11 +378,16 @@ class Resource_Step1(tk.Toplevel):    # resource- failure rate
                 b = float(textBox5.get("1.0", "end-1c"))
                 resourcelist2 = self.resourcelist
                 resourcelist2["Resource_failure_rate"] = numpy.random.uniform(a, b, len(self.resourcelist))
+                resourcelist2 = resourcelist2[['Resource', 'Frequency','Resource_failure_rate', 'Activities']]
                 numpy.random.seed(0)
                 mylist2.delete('1.0', END)
                 mylist2.insert(tk.CURRENT, resourcelist2[0:len(self.resourcelist)].to_string(index=False))
                 messagebox.showinfo("Message",
                                     "'Sampling from uniform dist' applied. Check updated resource list.")
+                system_info_frame1.config(highlightbackground="gray1", highlightcolor = "gray1", highlightthickness=2)
+                base_frame_label2.config(highlightbackground="gray1", highlightcolor = "gray1", highlightthickness=2)
+                resource_info_frame1.config(highlightbackground="dark orange", highlightcolor = "dark orange", highlightthickness=2)
+
             root.attributes('-topmost', 1)
             root.attributes('-topmost', 0)
 
@@ -435,7 +454,7 @@ class Resource_Step1_sub(tk.Toplevel):    # resource- failure rate
 
         #
         sub_frame4 = Frame(resource_info_frame1, bg='gray1')
-        sub_frame4.grid(row=0, column=0, sticky='w', pady=10)
+        sub_frame4.grid(row=0, column=0, sticky='w', padx=10, pady=10)
 
         sub_frame4.rowconfigure(0, weight=1)
         sub_frame4.columnconfigure(0, weight=1)
@@ -474,7 +493,7 @@ class Resource_Step1_sub(tk.Toplevel):    # resource- failure rate
         base_frame_label2.grid(row=1, column=1,sticky='nwse', padx=10)
 
         sub_frame3 =Frame(base_frame_label2, bg='gray1')
-        sub_frame3.grid(row=0, column=0, sticky='nwse', pady=10)
+        sub_frame3.grid(row=0, column=0, sticky='nwse', padx=10,pady=10)
 
         sub_frame3.rowconfigure(0, weight=1)
         sub_frame3.columnconfigure(0, weight=1)
@@ -544,6 +563,9 @@ class Resource_Step1_sub(tk.Toplevel):    # resource- failure rate
             Inject_Anomaly.data_with_resource = extracted_data4
             Resource_Step1.root.update()
             messagebox.showinfo("Message", "Successfully proceeded")
+            Resource_Step1.system_info_frame1.config(highlightbackground="gray1", highlightcolor="gray1", highlightthickness=2)
+            Resource_Step1.base_frame_label2.config(highlightbackground="dark orange", highlightcolor="dark orange",
+                                     highlightthickness=2)
             root.destroy()
             self.root2.lift()
 

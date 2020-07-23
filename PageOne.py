@@ -20,7 +20,6 @@ import numpy
 
 #Pages
 from PageTwo import PageTwo
-from PageThree import PageThree
 
 from PageTwo_Resource import Resource_Step1
 from PageTwo_System import System_Step1
@@ -147,9 +146,13 @@ class PageOne(tk.Frame):
                 PageTwo.event_log = event_log       #orginal data without preprocessing
                 datainfo(event_log)
                 autodetection()
+                messagebox.showinfo("Message", alert_message1)
+                ctr_left_label2.config(highlightbackground="gray1", highlightcolor = "gray1", highlightthickness=2)
+                ctr_right_label2.config(highlightbackground="dark orange", highlightcolor = "dark orange", highlightthickness=2)
+
             if alert_value == 0:
                 alert_message1 = "Nothing was checked"
-            messagebox.showinfo("Message", alert_message1)
+                messagebox.showinfo("Error", alert_message1)
 
         # autodetection: automatically set key attributes (center-right)
         def autodetection():
@@ -241,6 +244,7 @@ class PageOne(tk.Frame):
 
         ctr_left_label2 = LabelFrame(ctr_left, text="csv_list (max=10)", font=("Consolas", 10, 'bold'),
                                      fg="white", bg='gray1', bd=3, height=248)
+        ctr_left_label2.config(highlightbackground="dark orange", highlightcolor = "dark orange", highlightthickness=2)
         ctr_left_label2.grid(row=12, sticky="we", padx=5, pady=(7, 0), ipadx=0, ipady=0)
         ctr_left_label2.grid_propagate(False)
         style1 = ttk.Style()
@@ -269,6 +273,7 @@ class PageOne(tk.Frame):
 
         ctr_right_label2 = LabelFrame(ctr_right_sub, text="Set key attributes", font=("Consolas", 10, 'bold'),
                                       fg="white", bg='gray1', bd=3, padx=14, pady=7)
+
         ctr_right_label2.grid(row=1, sticky="w", padx=14, pady=(7, 0))
 
         Caseid_Label = Label(ctr_right_label2, text=" 1. Case_ID", font=("Consolas", 10, 'bold'),
@@ -326,6 +331,7 @@ class PageOne(tk.Frame):
         # Scrollbar to represent dataframe (center-left)
         ctr_right_label3 = LabelFrame(ctr_right_sub, text="Data frame (maximum 20 rows)", font=("Consolas", 10, 'bold'),
                                       fg="white", bg='gray1', bd=3, padx=12, width=400, height=135, pady=7)
+
         ctr_right_label3.grid(row=3, sticky="w", padx=14, pady=(14, 0))
 
         mylist = Text(ctr_right_label3, width=50, height=6, wrap=NONE)
@@ -364,7 +370,8 @@ class PageOne(tk.Frame):
 
                 if selected_eventid!="-- no attribute --" :
                     extracted_data = event_log[[selected_caseid, selected_eventid, selected_activity, selected_timestamp]]
-                extracted_data.columns = ["Case", "Event", "Activity", "Timestamp"]
+                extracted_data.columns = \
+                    ["Case", "Event", "Activity", "Timestamp"]
                 PageTwo.firstpreprocess = extracted_data
                 extracted_data = extracted_data.sort_values(["Case", "Timestamp"],
                                                             ascending=[True, True])

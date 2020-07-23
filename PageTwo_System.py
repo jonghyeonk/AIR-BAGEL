@@ -50,10 +50,14 @@ class System_Step1(tk.Toplevel):
 
 
         # System info (Center-top) , to set system attribute
-        system_info_frame1 = LabelFrame(base_frame, text="Set system attribute", font=("Consolas", 10, 'bold'),
+        system_info_frame1 = LabelFrame(base_frame, text="(A) Set system attribute", font=("Consolas", 10, 'bold'),
                                           fg="white", bg='gray1', bd=3)
+        system_info_frame1.config(highlightbackground="dark orange", highlightcolor = "dark orange", highlightthickness=2)
+
         system_info_frame1.grid(row=1, column=0, sticky="nw", padx=10, pady=7)
 
+        System_Step1.system_info_frame1 = system_info_frame1
+        self.system_info_frame1= system_info_frame1
         self.cVar1 = IntVar()
         s = ttk.Style()
         s.configure('Red.TCheckbutton', foreground="aquamarine", background='gray1')
@@ -79,18 +83,57 @@ class System_Step1(tk.Toplevel):
         if len(system_candidate) > 1:
             system_chosen.current(system_candidate[0])
 
-        sub_frame0_label2 = ttk.Checkbutton(sub_frame0, text='Generate an artificial system attribute ', variable=self.cVar1, width=20,
+        sub_frame0_label2 = ttk.Checkbutton(sub_frame0, text='Generate an artificial system attribute ', variable=self.cVar1,
                                   onvalue=2, style='Red.TCheckbutton')
         sub_frame0_label2.grid(row=1, column=0, sticky="w", padx=(0 ,1))
-        sub_frame0_label2.config(width=30)
+
         self.cVar1.set(0)
 
         System_Step1_sub.extracted_data = self.extracted_data   # data with key attributes
         def set_sys_attribute():
             if self.cVar1.get() == 1:
-                pass
+
+                selected_system = system_chosen.get()
+                dat_system = self.firstpreprocess
+                dat_system["System"] = self.event_log[selected_system]
+                dat_system = dat_system.sort_values(["Case", "Timestamp"],
+                                                        ascending=[True, True])
+                params = {
+                    'Case': 'count',
+                    'Activity': lambda x: ','.join(sorted(pd.Series.unique(x)))
+                }
+                dat = dat_system[['Activity', 'System']]
+                dat = dat.drop_duplicates()
+                Abnorm_sys.dat = dat
+
+                global extracted_data4
+                extracted_data4 = pd.merge(self.extracted_data, dat, on="Activity")
+                Inject_Anomaly.data_with_system = extracted_data4
+                systemlist = dat_system.groupby('System').agg(params).reset_index()
+                systemlist.columns = ["System", "Frequency", "Activities"]
+                systemlist = systemlist.sort_values(["Frequency"], ascending=False)
+                cols = ["System", "Frequency", "Activities"]
+                systemlist = systemlist[cols]
+                systemlist = systemlist.reset_index(drop=True)
+                self.systemlist = systemlist
+                self.systemlist2 = systemlist
+
+                system_info_frame1.config(text="System list (n={})".format(len(self.systemlist)))
+                System_Step1.mylist1.insert(tk.CURRENT, pd.DataFrame(systemlist).to_string(
+                    index=False))
+                extracted_data2 = self.extracted_data
+                extracted_data2["System"] = dat_system["System"]
+                self.extracted_data2 = extracted_data2
+                PageThree.before = extracted_data2
+                system_info_frame1.config(highlightbackground="gray1", highlightcolor = "gray1", highlightthickness=2)
+                base_frame_label2.config(highlightbackground="dark orange", highlightcolor = "dark orange", highlightthickness=2)
+
+
+
             elif self.cVar1.get() == 2:
                 self.new_window(root2, parent, System_Step1_sub)
+
+
             elif self.cVar1.get() < 1:
                 messagebox.showinfo("Error", "Nothing was checked")
                 root.attributes('-topmost', 1)
@@ -104,7 +147,7 @@ class System_Step1(tk.Toplevel):
                                      fg="white", bg='gray1', bd=3, padx=12 ,width=385 ,height=245, pady=7)
         sys_info_frame1.grid(row=0, column=0, sticky = 'nws', padx=10, pady=7)
 
-        System_Step1.mylist1= Text(sys_info_frame1, width=45 ,height=13, wrap=NONE)
+        System_Step1.mylist1= Text(sys_info_frame1, width=75 ,height=13, wrap=NONE)
         vscroll1= Scrollbar(sys_info_frame1, orient=VERTICAL ,command=System_Step1.mylist1.yview)
         vscroll1.place(in_=System_Step1.mylist1, relx=1.0, relheight=1.0, bordermode="outside")
         System_Step1.mylist1['yscroll'] = vscroll1.set
@@ -124,7 +167,7 @@ class System_Step1(tk.Toplevel):
                                      fg="white", bg='gray1', bd=3, padx=12 ,width=385 ,height=262, pady=7)
         sys_info_frame2.grid(row=1, column=0, sticky = 'nws', padx=10, pady=7)
 
-        System_Step1.mylist2= Text(sys_info_frame2, width=45 ,height=14, wrap=NONE)
+        System_Step1.mylist2= Text(sys_info_frame2, width=75 ,height=14, wrap=NONE)
         vscroll2= Scrollbar(sys_info_frame2, orient=VERTICAL ,command=System_Step1.mylist2.yview)
         vscroll2.place(in_=System_Step1.mylist2, relx=1.0, relheight=1.0, bordermode="outside")
         System_Step1.mylist2['yscroll'] = vscroll2.set
@@ -140,16 +183,17 @@ class System_Step1(tk.Toplevel):
         System_Step1.mylist2.insert(tk.CURRENT, df2.to_string(index=False))
 
         # choose parameters (center-right)
-        base_frame_label2 = LabelFrame(center ,text=" Simulate Poisson Process ", font=("Consolas", 10, 'bold'),
+        base_frame_label2 = LabelFrame(center ,text=" (B) Simulate Poisson Process ", font=("Consolas", 10, 'bold'),
                                        fg="white", bg='gray1', bd=3, padx=14, pady=7)
         base_frame_label2.grid(row=0, rowspan=2, column=1, sticky = 'nwse', padx=10, pady=7)
+        System_Step1.base_frame_label2 = base_frame_label2
 
         # image for explaining poisson process (center-right)
 
         os.chdir(os.sep.join([str(self.org_path), "utils"]))
         image_frame= Frame(base_frame_label2, bg='gray1')
-        image_frame.grid(row=4, column=0 ,columnspan=3, pady=(60 ,10))
-        image1 = PhotoImage(file= "test4.gif")      #stochastical process (poisson)
+        image_frame.grid(row=5, column=0 ,columnspan=3, pady=(60 ,10))
+        image1 = PhotoImage(file= "test4.GIF")      #stochastical process (poisson)
         smaller_image1 = image1.subsample(2, 2)
 
         panel = Label(image_frame, image = smaller_image1)
@@ -160,13 +204,10 @@ class System_Step1(tk.Toplevel):
         s.configure('Red.TCheckbutton', foreground="aquamarine" ,background='gray1')
 
         # input poisson parameter (center-right)
-        fixed = Label(base_frame_label2, text="- Poisson dist(1/\u03BB) (1 system down per mean duration of time with 1/\u03BB day)",
-                      font=("Consolas", 10, 'bold'), fg="white", bg='gray1', anchor="w", width=80)
-        fixed.grid(row=0, column=0, sticky='w', padx=(0,5))
 
         # Set seed (center-right)
         seed_frame1 = Frame(base_frame_label2, bg='gray30', relief='ridge', borderwidth=2, width=15)
-        seed_frame1.grid(row=1, column=0, padx=(15, 3), pady=(5, 5), stick='w')
+        seed_frame1.grid(row=0, column=0, padx=(15, 3), pady=(5, 5), stick='w')
         seed_Label = Label(seed_frame1, text="(Optional) Seed = ",
                            fg="white", bg='gray30', anchor="w")
         seed_Label.grid(row=0, column=0, sticky='w')
@@ -176,6 +217,10 @@ class System_Step1(tk.Toplevel):
         seedBox1.grid(row=0, column=0, padx=(0, 5))
         seedBox1.configure(state="normal", background="white")
 
+        fixed = Label(base_frame_label2, text="(1) Average interval of 'start_timestamp' between system down events",
+                      font=("Consolas", 10, 'bold'), fg="white", bg='gray1', anchor="w", width=80)
+        fixed.grid(row=1, column=0, sticky='w', padx=(0,5))
+
         sub_frame1 = Frame(base_frame_label2, bg='gray1', width= 300, height= 100)
         sub_frame1.grid(row=2, column=0, stick='w', pady= (5,5))
 
@@ -183,37 +228,51 @@ class System_Step1(tk.Toplevel):
                                   fg="white", bg='gray1' ,anchor="w")
         empty_label1.grid(row=0, column=0)
 
-        self.cVar2 = IntVar()
-        def onoff():
-            chnum =self.cVar2.get()
-            if chnum ==1:
-                textBox1.configure(state="normal", background="white")
-            elif chnum == 11 :
-                textBox1.configure(state="disabled", background="gray60")
-            elif chnum==2:
-                textBox1.configure(state="disabled", background="gray60")
+        sub_frame1_label1 = Label(sub_frame1, text=' -1/\u03BB (days) = ', font=("Consolas", 10, 'bold'),
+                                  fg="aquamarine", bg='gray1' ,anchor="w")
+        sub_frame1_label1.grid(row=0, column=1, sticky="w", padx=(0 ,1))
 
-        s = ttk.Style()
-        s.configure('Red.TCheckbutton', foreground="aquamarine" ,background='gray1')
-        bace_c1 = ttk.Checkbutton(sub_frame1, text="<All>", variable = self.cVar2, width=6,
-                                  onvalue=1, offvalue=11, style='Red.TCheckbutton' , command= onoff)
-        bace_c1.grid(row=0, column=1, sticky='w')
-
-        sub_frame1_label1 = Label(sub_frame1, text='1/\u03BB day = ', font=("Consolas", 10, 'bold'),
-                                  fg="white", bg='gray1' ,anchor="w")
-        sub_frame1_label1.grid(row=0, column=2, sticky="w", padx=(0 ,1))
-
-        textBox1 =Text(sub_frame1, height=1, width=3)
-        textBox1.grid(row=0, column=3, padx=(0,30))
+        textBox1 =Text(sub_frame1, height=1, width=5)
+        textBox1.grid(row=0, column=2, padx=(0,30))
         textBox1.configure(state="normal", background="white")
 
-        empty_label2 = Label(sub_frame1, text=' ', font=("Consolas", 10, 'bold'),
+
+        fixed2 = Label(base_frame_label2, text="(2) Max/Min duration of system down to set 'finish_timestamp'",
+                      font=("Consolas", 10, 'bold'), fg="white", bg='gray1', anchor="w", width=80)
+        fixed2.grid(row=3, column=0, sticky='w', padx=(0,5))
+
+        sub_frame3 = Frame(base_frame_label2, bg='gray1', width= 300, height= 100)
+        sub_frame3.grid(row=4, column=0, stick='w', pady= (5,5))
+
+        empty_label2 = Label(sub_frame3, text=' ', font=("Consolas", 10, 'bold'),
                                   fg="white", bg='gray1' ,anchor="w")
-        empty_label2.grid(row=1, column=0, pady=(5,0))
-        s.configure('Red.TCheckbutton', foreground="aquamarine", background='gray1')
-        bace_c2 = ttk.Checkbutton(sub_frame1, text="<Self-configuration>", variable=self.cVar2,
-                                  onvalue=2, style='Red.TCheckbutton', command= onoff)
-        textBox1.configure(state="disabled", background="gray60")
+        empty_label2.grid(row=0, column=0)
+
+        sub_frame1_label2 = Label(sub_frame3, text=' -a (minimum hours) = ', font=("Consolas", 10, 'bold'),
+                                  fg="aquamarine", bg='gray1' ,anchor="w")
+        sub_frame1_label2.grid(row=0, column=1, sticky="w", padx=(0 ,1))
+
+        textBox2 =Text(sub_frame3, height=1, width=5)
+        textBox2.grid(row=0, column=2, padx=(0,3))
+        textBox2.configure(state="normal", background="white")
+
+
+        sub_frame1_label3 = Label(sub_frame3, text=', b (maximum hours) = ', font=("Consolas", 10, 'bold'),
+                                  fg="aquamarine", bg='gray1' ,anchor="w")
+        sub_frame1_label3.grid(row=0, column=3, sticky="w", padx=(0 ,1))
+
+        textBox3 =Text(sub_frame3, height=1, width=5)
+        textBox3.grid(row=0, column=4, padx=(0,30))
+        textBox3.configure(state="normal", background="white")
+
+        empty_label3 = Label(sub_frame3, text=' ', font=("Consolas", 10, 'bold'),
+                                  fg="white", bg='gray1' ,anchor="w")
+
+
+
+        empty_label3.grid(row=1, column=0, pady=(5,0))
+
+
 
         # Simulate Poisson Process
         def PoissonProcess():
@@ -226,7 +285,8 @@ class System_Step1(tk.Toplevel):
             lamb = int(textBox1.get("1.0", "end-1c"))
             Abnorm_sys.lamb = lamb
             sl = self.systemlist2['System']
-            df3 = pd.DataFrame( columns=['Event:system down', 'Start_Timestamp_Unix','Start_Timestamp'])
+            df3 = pd.DataFrame( columns=['Event:system down', 'Start_Timestamp_Unix','Start_Timestamp',
+                                         'Finish_Timestamp_Unix','Finish_Timestamp'])
             for i in sl:
                 t = mintime
                 cat1= pd.DataFrame()
@@ -238,20 +298,31 @@ class System_Step1(tk.Toplevel):
                 cat1['Start_Timestamp_Unix'] = Start_Timestamp_Unix
                 Start_Timestamp = cat1['Start_Timestamp_Unix'].apply(lambda x: datetime.datetime.utcfromtimestamp(x))
                 cat1['Start_Timestamp'] = Start_Timestamp
+                a = float(textBox2.get("1.0", "end-1c"))*3600
+                b = float(textBox3.get("1.0", "end-1c"))*3600
+
+                cat1['Finish_Timestamp_Unix'] = Start_Timestamp_Unix + numpy.random.uniform(a, b, 1)
+                Finish_Timestamp = cat1['Finish_Timestamp_Unix'].apply(lambda x: datetime.datetime.utcfromtimestamp(x))
+                cat1['Finish_Timestamp'] = Finish_Timestamp
+                cat1 = cat1[cat1['Finish_Timestamp_Unix'] < maxtime]
                 df3= df3.append(cat1, ignore_index = True)
 
             numpy.random.seed(0)
-            df4= df3[['Event:system down', 'Start_Timestamp']]
+            df4= df3[['Event:system down', 'Start_Timestamp','Finish_Timestamp']]
             Inject_Anomaly.system_down =df4     # System down
             PageThree.system_down =df4
             System_Step1.mylist2.delete('1.0', END)
             System_Step1.mylist2.insert(tk.CURRENT, df4[0:len(df4)].to_string(index=False))
             messagebox.showinfo("Message", "Finished Poisson Simulation")
+            system_info_frame1.config(highlightbackground="gray1", highlightcolor = "gray1", highlightthickness=2)
+            base_frame_label2.config(highlightbackground="gray1", highlightcolor = "gray1", highlightthickness=2)
+            sys_info_frame2.config(highlightbackground="dark orange", highlightcolor = "dark orange", highlightthickness=2)
+
             root.attributes('-topmost', 1)
             root.attributes('-topmost', 0)
 
         action2 = tk.Button(base_frame_label2, text="Apply", width=10, command= PoissonProcess)
-        action2.grid(row=3, column=0, sticky='e', padx=(0,10))
+        action2.grid(row=4, column=0, sticky='e', padx=(0,10))
 
         def next():
             root.destroy()
@@ -293,13 +364,11 @@ class System_Step1_sub(tk.Toplevel):    # resource- failure rate
         system_info_frame1 = LabelFrame(base_frame, text="The number of activities ={}".format(len(activitylist)), font=("Consolas", 10, 'bold'),
                                           fg="white", bg='gray1', bd=3)
         system_info_frame1.grid(row=1, column=0 ,  padx=10, pady=7 , sticky = 'nwse')
+        system_info_frame1.config(highlightbackground="dark orange",highlightcolor = "dark orange", highlightthickness=2)
 
         # Input the number of systems  (center-top)
         sub_frame2 = Frame(system_info_frame1, bg='gray1')
         sub_frame2.grid(row=0, column=0, sticky='w', pady=10)
-        # sub_frame2.rowconfigure(0, weight=1)
-        # sub_frame2.columnconfigure(0, weight=1)
-        # sub_frame2.grid_propagate(False)
 
         sub_frame2_label1 = Label(sub_frame2, text='Set the number of system: ', font=("Consolas", 10, 'bold'),
                                   fg="white", bg='gray1' ,anchor="w")
@@ -324,6 +393,11 @@ class System_Step1_sub(tk.Toplevel):    # resource- failure rate
                 globals()['act{}_sys'.format(k)].current(numpy.random.randint(0,len(systemlist)))
             messagebox.showinfo("Message",
                                     "{} systems have been generated".format(n), parent= root)
+            system_info_frame1.config(highlightbackground="gray1", highlightcolor="gray1",
+                                      highlightthickness=2)
+            base_frame_label2.config(highlightbackground="dark orange", highlightcolor="dark orange",
+                                      highlightthickness=2)
+
             numpy.random.seed(0)
             root.attributes('-topmost', 1)
             root.attributes('-topmost', 0)
@@ -394,8 +468,12 @@ class System_Step1_sub(tk.Toplevel):    # resource- failure rate
             System_Step1.mylist1.insert(tk.CURRENT, systemlist2[0:len(systemlist2)].to_string(index=False))
             Inject_Anomaly.data_with_system = extracted_data4
             messagebox.showinfo("Message", "Successfully proceeded")
+            System_Step1.system_info_frame1.config(highlightbackground="gray1", highlightcolor="gray1", highlightthickness=2)
+            System_Step1.base_frame_label2.config(highlightbackground="dark orange", highlightcolor="dark orange",
+                                     highlightthickness=2)
             root.destroy()
             self.root2.lift()
+
 
         action_sys1 = tk.Button(base_frame, text="Apply", width=10, command= lambda: attach_sys(activitylist))
         action_sys1.grid(row=3, column=0, sticky = 'e', padx= (0,20), pady=10)
