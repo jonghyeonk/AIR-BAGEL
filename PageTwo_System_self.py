@@ -176,7 +176,7 @@ class System_step1_self(tk.Toplevel):
             initial = str(datetime.datetime.utcfromtimestamp(mintime))
             globals()['down_dist{}'.format(self.en)] = tk.StringVar()
             globals()['down_0_{}'.format(self.en)] = ttk.Combobox(frame_buttons1, width=6 ,textvariable=['down_dist{}'.format(self.en)])
-            globals()['down_0_{}'.format(self.en)]['values'] = list(self.systemlist['System'])
+            globals()['down_0_{}'.format(self.en)]['values'] = self.systemlist
             globals()['down_0_{}'.format(self.en)].grid(row=self.en-1, column=0)
             globals()['down_0_{}'.format(self.en)].current(0)
 
