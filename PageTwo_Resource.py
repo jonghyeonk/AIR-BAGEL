@@ -121,7 +121,7 @@ class Resource_Step1(tk.Toplevel):    # resource- failure rate
                 resourcelist = resourcelist[cols]
                 resourcelist = resourcelist.reset_index(drop=True)
                 self.resourcelist= resourcelist
-                resource_info_frame1.config(text="Resource list (n={})".format(len(self.resourcelist)))
+                resource_info_frame1.config(text="Resources in event log")
                 mylist2.insert(tk.CURRENT, pd.DataFrame(resourcelist).to_string(index=False))    # Data with Resource ID - Workload - Failure rate
                 extracted_data2 = extracted_data
                 extracted_data2["Resource"] = dat_resource["Resource"]
@@ -153,7 +153,7 @@ class Resource_Step1(tk.Toplevel):    # resource- failure rate
         # resource_info_frame1 = LabelFrame(base_frame ,text="Resource list (n={})".format(len(self.resourcelist)), font=("Consolas", 10, 'bold'),
         #                                   fg="white", bg='gray1', bd=3, padx=12 ,width=385 ,height=340, pady=7)
         # resource_info_frame1.place(x=10 ,y=140)
-        resource_info_frame1 = LabelFrame(center ,text="Resource list", font=("Consolas", 10, 'bold'),
+        resource_info_frame1 = LabelFrame(center ,text="Resources in event log", font=("Consolas", 10, 'bold'),
                                           fg="white", bg='gray1', bd=3, padx=12 ,width=385 ,height=340, pady=7)
         resource_info_frame1.grid(row=0, column=0, sticky = 'nws', padx=5, pady=7)
 
@@ -348,7 +348,7 @@ class Resource_Step1(tk.Toplevel):    # resource- failure rate
                 numpy.random.seed(0)
                 mylist2.delete('1.0', END)
                 mylist2.insert(tk.CURRENT, resourcelist2[0:len(self.resourcelist)].to_string(index=False))
-                messagebox.showinfo("Message", "'Sampling from exp dist' applied. Check updated resource list.")
+                messagebox.showinfo("Message", "'Sampling from exp dist' applied. Check updated resources in event log.")
                 system_info_frame1.config(highlightbackground="gray1", highlightcolor = "gray1", highlightthickness=2)
                 base_frame_label2.config(highlightbackground="gray1", highlightcolor = "gray1", highlightthickness=2)
                 resource_info_frame1.config(highlightbackground="dark orange", highlightcolor = "dark orange", highlightthickness=2)
@@ -365,7 +365,7 @@ class Resource_Step1(tk.Toplevel):    # resource- failure rate
                 mylist2.delete('1.0', END)
                 mylist2.insert(tk.CURRENT, resourcelist2[0:len(self.resourcelist)].to_string(index=False))
                 messagebox.showinfo("Message",
-                                    "'Sampling from normal dist' applied. Check updated resource list.")
+                                    "'Sampling from normal dist' applied. Check updated resources in event log.")
                 system_info_frame1.config(highlightbackground="gray1", highlightcolor = "gray1", highlightthickness=2)
                 base_frame_label2.config(highlightbackground="gray1", highlightcolor = "gray1", highlightthickness=2)
                 resource_info_frame1.config(highlightbackground="dark orange", highlightcolor = "dark orange", highlightthickness=2)
@@ -383,7 +383,7 @@ class Resource_Step1(tk.Toplevel):    # resource- failure rate
                 mylist2.delete('1.0', END)
                 mylist2.insert(tk.CURRENT, resourcelist2[0:len(self.resourcelist)].to_string(index=False))
                 messagebox.showinfo("Message",
-                                    "'Sampling from uniform dist' applied. Check updated resource list.")
+                                    "'Sampling from uniform dist' applied. Check updated resources in event log.")
                 system_info_frame1.config(highlightbackground="gray1", highlightcolor = "gray1", highlightthickness=2)
                 base_frame_label2.config(highlightbackground="gray1", highlightcolor = "gray1", highlightthickness=2)
                 resource_info_frame1.config(highlightbackground="dark orange", highlightcolor = "dark orange", highlightthickness=2)

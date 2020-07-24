@@ -135,7 +135,7 @@ class Resource_step1_self(tk.Toplevel):
                 resourcelist = resourcelist[cols]
                 resourcelist = resourcelist.reset_index(drop=True)
                 self.resourcelist= resourcelist
-                resource_info_frame1.config(text="Resource list (n={})".format(len(self.resourcelist)))
+                resource_info_frame1.config(text="(A) Set resource attribute")
                 mylist1.insert(tk.CURRENT, pd.DataFrame(resourcelist).to_string(index=False))    # Data with Resource ID - Workload - Failure rate
                 extracted_data2 = self.extracted_data
                 extracted_data2["Resource"] = dat_resource["Resource"]
@@ -180,7 +180,7 @@ class Resource_step1_self(tk.Toplevel):
 
 
         # Res info (left)
-        res_info_frame2 = LabelFrame(center ,text="Resource list", font=("Consolas", 10, 'bold'),
+        res_info_frame2 = LabelFrame(center ,text="Resources in event log", font=("Consolas", 10, 'bold'),
                                      fg="white", bg='gray1', bd=3)
         res_info_frame2.grid(row=0, column=0, sticky = 'nw', padx=10, pady=7)
         Resource_step1_self.res_info_frame2 = res_info_frame2

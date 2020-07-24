@@ -86,15 +86,15 @@ class PageTwo(tk.Frame):
         # Page explanation (center-top)
         ctr_mid_label2b = LabelFrame(ctr_mid, text=" Explanation ", font=("Consolas", 10, 'bold'),
                                      fg="white", bg='gray1', bd=1)
-        ctr_mid_label2b.grid(row=1, column=0, padx= (7,0),sticky='nw')
+        ctr_mid_label2b.grid(row=1, column=0, padx= 10,sticky='nw')
 
         Guide_container1 = Frame(ctr_mid_label2b, bg='gray0',  highlightbackground="gray1",
                                  highlightthickness=0)
         Guide_container1.grid(row=0, column=0)
-        Guide_Label1 = Text(Guide_container1, width=50, height=6, wrap=tk.WORD, fg="aquamarine", bg='gray1', bd=0)
+        Guide_Label1 = Text(Guide_container1, width=55, height=6, wrap=tk.WORD, fg="aquamarine", bg='gray1', bd=0)
         Guide_Label1.insert(tk.CURRENT,
-                            "Select one or more root causes among resource/system being a cause of anomalous event, then set parameters on selected root causes. After then, click 'Next' to select anomaly types.")
-        Guide_Label1.grid(row=0, column=0)
+                            " Select Resource or System as root cause of injected anomalies (it is possible to select both).\n For each root cause, set whether to draw anomalies from a random distribution (random) or through manually set configuration (self-configuration)")
+        Guide_Label1.grid(row=0, column=0, padx= 3, pady=5)
 
         # Set failure rate (center-mid)
         ctr_mid_label2 = LabelFrame(ctr_mid, text=" Set parameters on root causes ", font=("Consolas", 10, 'bold'),

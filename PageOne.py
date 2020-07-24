@@ -332,7 +332,7 @@ class PageOne(tk.Frame):
         timeform_value_chosen.bind("<<ComboboxSelected>>", TextBoxUpdate)
 
         # Scrollbar to represent dataframe (center-left)
-        ctr_right_label3 = LabelFrame(ctr_right_sub, text="Data frame (maximum 20 rows)", font=("Consolas", 10, 'bold'),
+        ctr_right_label3 = LabelFrame(ctr_right_sub, text="Data preview (maximum 20 rows)", font=("Consolas", 10, 'bold'),
                                       fg="white", bg='gray1', bd=3, padx=12, width=400, height=135, pady=7)
 
         ctr_right_label3.grid(row=3, sticky="w", padx=14, pady=(14, 0))

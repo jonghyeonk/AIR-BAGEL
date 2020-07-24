@@ -118,7 +118,7 @@ class System_Step1(tk.Toplevel):
                 self.systemlist = systemlist
                 self.systemlist2 = systemlist
 
-                system_info_frame1.config(text="System list (n={})".format(len(self.systemlist)))
+                system_info_frame1.config(text="Systems in event log")
                 System_Step1.mylist1.insert(tk.CURRENT, pd.DataFrame(systemlist).to_string(
                     index=False))
                 extracted_data2 = self.extracted_data
@@ -143,7 +143,7 @@ class System_Step1(tk.Toplevel):
         action1.grid(row=2, column=2, padx= (20,10 ))
 
         # Sys info (center-left-up)
-        sys_info_frame1 = LabelFrame(center ,text="System list", font=("Consolas", 10, 'bold'),
+        sys_info_frame1 = LabelFrame(center ,text="Systems in event log", font=("Consolas", 10, 'bold'),
                                      fg="white", bg='gray1', bd=3, padx=12 ,width=385 ,height=245, pady=7)
         sys_info_frame1.grid(row=0, column=0, sticky = 'nws', padx=10, pady=7)
 
