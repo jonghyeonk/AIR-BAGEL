@@ -318,7 +318,7 @@ class System_step1_self_sub(tk.Toplevel):    # resource- failure rate
                 globals()['act{}_sys'.format(k)].current(numpy.random.randint(0,len(systemlist)))
             messagebox.showinfo("Message",
                                     "{} systems have been generated".format(n), parent= root)
-            sub_frame2_label1.config(highlightbackground="gray1", highlightcolor="gray1",
+            system_info_frame1.config(highlightbackground="gray1", highlightcolor="gray1",
                                       highlightthickness=2)
 
             base_frame_label2.config(highlightbackground="dark orange", highlightcolor="dark orange",
@@ -392,6 +392,7 @@ class System_step1_self_sub(tk.Toplevel):    # resource- failure rate
             System_step1_self.systemlist2 = systemlist2
             Inject_Anomaly.data_with_system = extracted_data4
             messagebox.showinfo("Message", "Successfully proceeded")
+
             System_step1_self.system_info_frame1.config(highlightbackground="gray1", highlightcolor="gray1", highlightthickness=2)
             System_step1_self.base_frame_label1.config(highlightbackground="dark orange", highlightcolor="dark orange",
                                      highlightthickness=2)
