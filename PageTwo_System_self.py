@@ -149,8 +149,8 @@ class System_step1_self(tk.Toplevel):
         action1 = tk.Button(sub_frame0, text="Set", padx=25, command = set_sys_attribute)
         action1.grid(row=2, column=2, padx= (20,10 ))
 
-        # System down
-        base_frame_label1 = LabelFrame(center, text="(B) Set system downtime event",
+        # system malfunctioning
+        base_frame_label1 = LabelFrame(center, text="(B) Set system system malfunctioning time event",
                                        font=("Consolas", 10, 'bold'),
                                        fg="white", bg='gray1', bd=3)
         base_frame_label1.grid(row=1, column=0, pady=10)
@@ -218,7 +218,7 @@ class System_step1_self(tk.Toplevel):
 
         def attach_sys():
 
-            df3 = pd.DataFrame(columns=['Event:system down',  'Start_Timestamp', 'Finish_Timestamp'])
+            df3 = pd.DataFrame(columns=['Event:system system malfunctioning',  'Start_Timestamp', 'Finish_Timestamp'])
 
             sys_down = list(numpy.repeat("sys", self.en))
             start = list(numpy.repeat("st", self.en))
@@ -231,14 +231,14 @@ class System_step1_self(tk.Toplevel):
                 finish[i - 1] = globals()['down_4_{}'.format(i)].get("1.0", "end-1c")
 
             form= "%Y-%m-%d %H:%M:%S.%f"
-            df3['Event:system down'] =  sys_down
+            df3['Event:system system malfunctioning'] =  sys_down
             df3['Start_Timestamp'] = start
             df3['Start_Timestamp'] = df3['Start_Timestamp'].apply(lambda x: dt.strptime(x, form))
             df3['Finish_Timestamp'] = finish
             df3['Finish_Timestamp'] = df3['Finish_Timestamp'].apply(lambda x: dt.strptime(x, form))
 
-            df4= df3[['Event:system down', 'Start_Timestamp', 'Finish_Timestamp']]
-            Inject_Anomaly.system_down =df4     # System down
+            df4= df3[['Event:system system malfunctioning', 'Start_Timestamp', 'Finish_Timestamp']]
+            Inject_Anomaly.system_down =df4     # system system malfunctioning
             PageThree.system_down =df4
 
             messagebox.showinfo("Message", "Successfully proceeded")

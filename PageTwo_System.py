@@ -163,7 +163,7 @@ class System_Step1(tk.Toplevel):
         System_Step1.mylist1.insert(tk.CURRENT, df1.to_string(index=False))
 
         # Sys info (center-left-down)
-        sys_info_frame2 = LabelFrame(center ,text="Log of system down", font=("Consolas", 10, 'bold'),
+        sys_info_frame2 = LabelFrame(center ,text="Log of system malfunctioning", font=("Consolas", 10, 'bold'),
                                      fg="white", bg='gray1', bd=3, padx=12 ,width=385 ,height=262, pady=7)
         sys_info_frame2.grid(row=1, column=0, sticky = 'nws', padx=10, pady=7)
 
@@ -179,7 +179,7 @@ class System_Step1(tk.Toplevel):
 
         pd.set_option('display.width' ,1000)
         pd.options.display.max_colwidth = 200
-        df2= pd.DataFrame(index=[0], columns=['Event:system down','Start_Timestamp'])
+        df2= pd.DataFrame(index=[0], columns=['Event:system malfunctioning','Start_Timestamp'])
         System_Step1.mylist2.insert(tk.CURRENT, df2.to_string(index=False))
 
         # choose parameters (center-right)
@@ -217,7 +217,7 @@ class System_Step1(tk.Toplevel):
         seedBox1.grid(row=0, column=0, padx=(0, 5))
         seedBox1.configure(state="normal", background="white")
 
-        fixed = Label(base_frame_label2, text="(1) Average interval of 'start_timestamp' between system down events",
+        fixed = Label(base_frame_label2, text="(1) Average interval of 'start_timestamp' between system malfunctioning events",
                       font=("Consolas", 10, 'bold'), fg="white", bg='gray1', anchor="w", width=80)
         fixed.grid(row=1, column=0, sticky='w', padx=(0,5))
 
@@ -237,7 +237,7 @@ class System_Step1(tk.Toplevel):
         textBox1.configure(state="normal", background="white")
 
 
-        fixed2 = Label(base_frame_label2, text="(2) Max/Min duration of system down to set 'finish_timestamp'",
+        fixed2 = Label(base_frame_label2, text="(2) Max/Min duration of system malfunctioning to set 'finish_timestamp'",
                       font=("Consolas", 10, 'bold'), fg="white", bg='gray1', anchor="w", width=80)
         fixed2.grid(row=3, column=0, sticky='w', padx=(0,5))
 
@@ -285,7 +285,7 @@ class System_Step1(tk.Toplevel):
             lamb = int(textBox1.get("1.0", "end-1c"))
             Abnorm_sys.lamb = lamb
             sl = self.systemlist2['System']
-            df3 = pd.DataFrame( columns=['Event:system down', 'Start_Timestamp_Unix','Start_Timestamp',
+            df3 = pd.DataFrame( columns=['Event:system malfunctioning', 'Start_Timestamp_Unix','Start_Timestamp',
                                          'Finish_Timestamp_Unix','Finish_Timestamp'])
             for i in sl:
                 t = mintime
@@ -294,7 +294,7 @@ class System_Step1(tk.Toplevel):
                 while t<maxtime:
                     t = t+numpy.random.exponential(lamb, 1)*86400   #86400: To match time unit as second
                     Start_Timestamp_Unix.append(float(t))
-                cat1['Event:system down'] = list(numpy.repeat(i, len(Start_Timestamp_Unix)))
+                cat1['Event:system malfunctioning'] = list(numpy.repeat(i, len(Start_Timestamp_Unix)))
                 cat1['Start_Timestamp_Unix'] = Start_Timestamp_Unix
                 Start_Timestamp = cat1['Start_Timestamp_Unix'].apply(lambda x: datetime.datetime.utcfromtimestamp(x))
                 cat1['Start_Timestamp'] = Start_Timestamp
@@ -308,8 +308,8 @@ class System_Step1(tk.Toplevel):
                 df3= df3.append(cat1, ignore_index = True)
 
             numpy.random.seed(0)
-            df4= df3[['Event:system down', 'Start_Timestamp','Finish_Timestamp']]
-            Inject_Anomaly.system_down =df4     # System down
+            df4= df3[['Event:system malfunctioning', 'Start_Timestamp','Finish_Timestamp']]
+            Inject_Anomaly.system_down =df4     # malfunctioning
             PageThree.system_down =df4
             System_Step1.mylist2.delete('1.0', END)
             System_Step1.mylist2.insert(tk.CURRENT, df4[0:len(df4)].to_string(index=False))

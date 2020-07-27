@@ -361,6 +361,7 @@ class Resource_Step1(tk.Toplevel):    # resource- failure rate
                 sd = float(textBox3.get("1.0", "end-1c"))
                 resourcelist2 = self.resourcelist
                 resourcelist2["Resource_failure_rate"] = numpy.random.normal(mean, sd, len(self.resourcelist))
+                resourcelist2.loc[ (resourcelist2["Resource_failure_rate"] < 0), "Resource_failure_rate"] = 0
                 numpy.random.seed(0)
                 mylist2.delete('1.0', END)
                 mylist2.insert(tk.CURRENT, resourcelist2[0:len(self.resourcelist)].to_string(index=False))
@@ -404,7 +405,7 @@ class Resource_Step1(tk.Toplevel):    # resource- failure rate
                 numpy.random.seed(seed_value)
             PF = numpy.random.binomial(numpy.repeat(1, len(extracted_data2)), extracted_data2["Resource_failure_rate"])
             numpy.random.seed(0)
-            extracted_data2['Resource_Pass/Fail'] = PF
+            extracted_data2['Resource_Anomaly/Normal'] = PF
             extracted_data3 = extracted_data2
             Inject_Anomaly.extracted_data2 = extracted_data3    # Dataset with resource anomaly
             messagebox.showinfo("Message", "Completed: parameters on resource root have been defined")

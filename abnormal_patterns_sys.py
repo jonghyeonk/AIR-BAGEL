@@ -71,9 +71,9 @@ class Abnorm_sys():
         df_log["down_duration"] = np.nan
         df_log = df_log.sort_values(by=["Case", "Timestamp"], ascending=[True, True])
         for i in range(len(df_sys)):
-            df_log["type"] = np.where((df_log["System"] == df_sys.loc[i, "Event:system down"]) & (df_sys.loc[i, "down_start"] <= df_log["Timestamp"]) & (df_log["Timestamp"] < df_sys.loc[i, "down_finish"]), df_sys.loc[i, "type"], df_log["type"])
-            df_log["down_start"] = np.where((df_log["System"] == df_sys.loc[i, "Event:system down"]) & (df_sys.loc[i, "down_start"] <= df_log["Timestamp"]) & (df_log["Timestamp"] < df_sys.loc[i, "down_finish"]), df_sys.loc[i, "down_start"], df_log["down_start"])
-            df_log["down_finish"] = np.where((df_log["System"] == df_sys.loc[i, "Event:system down"]) & (df_sys.loc[i, "down_start"] <= df_log["Timestamp"]) & (df_log["Timestamp"] < df_sys.loc[i, "down_finish"]), df_sys.loc[i, "down_finish"], df_log["down_finish"])
+            df_log["type"] = np.where((df_log["System"] == df_sys.loc[i, "Event:system malfunctioning"]) & (df_sys.loc[i, "down_start"] <= df_log["Timestamp"]) & (df_log["Timestamp"] < df_sys.loc[i, "down_finish"]), df_sys.loc[i, "type"], df_log["type"])
+            df_log["down_start"] = np.where((df_log["System"] == df_sys.loc[i, "Event:system malfunctioning"]) & (df_sys.loc[i, "down_start"] <= df_log["Timestamp"]) & (df_log["Timestamp"] < df_sys.loc[i, "down_finish"]), df_sys.loc[i, "down_start"], df_log["down_start"])
+            df_log["down_finish"] = np.where((df_log["System"] == df_sys.loc[i, "Event:system malfunctioning"]) & (df_sys.loc[i, "down_start"] <= df_log["Timestamp"]) & (df_log["Timestamp"] < df_sys.loc[i, "down_finish"]), df_sys.loc[i, "down_finish"], df_log["down_finish"])
             df_log["down_start"] = df_log["down_start"].apply(lambda x: datetime.datetime.utcfromtimestamp(x//1000000000) if isinstance(x, int) is True else x)
             df_log["down_finish"] = df_log["down_finish"].apply(lambda x: datetime.datetime.utcfromtimestamp(x // 1000000000) if isinstance(x, int) is True else x)
         df_log["down_duration"] = df_log.apply(lambda x: x["down_finish"] - x["down_start"], axis=1)
@@ -201,7 +201,7 @@ class Abnorm_sys():
         df_new = df_new.sort_values(by=["Case", "Timestamp"], ascending=[True, True])
         df_new["order_b"] = df_new["order"]
         df_new["trace_temp"] = np.nan
-        df_new["trace_change_system"] = np.nan
+        df_new["is_trace_change(system)"] = np.nan
         df2 = pd.DataFrame.copy(df_new)
         df2["length"] = 1
         df2["check"] = 0
@@ -210,8 +210,8 @@ class Abnorm_sys():
         df_new["order"] = df2.groupby(["Case"])["length"].cumsum()
         df_new["max"] = df_new.groupby(["Case"])["order"].transform("max")
         df_new["trace_temp"] = np.where(df_new["order"] != df_new["order_b"], 1, 0)
-        df_new["trace_change_system"] = df_new.groupby(["Case"])["trace_temp"].transform("max")
-        df_new["trace_change_system"] = np.where((df_new["sys_anomaly_type"] == "cut_from") | (df_new["sys_anomaly_type"] == "skip"), 1, df_new["trace_change_system"])
+        df_new["is_trace_change(system)"] = df_new.groupby(["Case"])["trace_temp"].transform("max")
+        df_new["is_trace_change(system)"] = np.where((df_new["sys_anomaly_type"] == "cut_from") | (df_new["sys_anomaly_type"] == "skip"), 1, df_new["is_trace_change(system)"])
         df_new = df_new.drop(["type", "down_finish", "down_start", "cusum", "max", "order_b", "trace_temp"], axis=1)
         end_inject = datetime.datetime.now()
         Inject_Anomaly.text_progress.insert(tk.END, "<System> Finished to inject anomaly patterns (running time={0})\n".format(end_inject - start_inject))

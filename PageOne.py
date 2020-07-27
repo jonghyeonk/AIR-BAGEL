@@ -9,7 +9,7 @@ from tkinter import *
 from tkinter import ttk
 from tkinter.scrolledtext import ScrolledText
 from tkinter import messagebox
-
+import webbrowser
 
 #For Data preprocess
 import pandas as pd
@@ -86,6 +86,8 @@ class GridTest(tk.Tk):
 class PageOne(tk.Frame):
     def __init__(self, parent):
         tk.Frame.__init__(self, parent, bg='dark slate gray')
+
+
         # Create main containers
         top_frame = Frame(self, bg='dark slate gray', width=50, height=50, padx=7, pady=3)
         center = Frame(self, bg='dark slate gray', width=50, height=40, padx=7, pady=3)
@@ -263,6 +265,45 @@ class PageOne(tk.Frame):
             i = i + 1
         action = tk.Button(ctr_left, text="Load",  width = 10, command=selectdata)
         action.grid(row=13,  sticky="we" , padx =60 ,pady= (7,10))
+
+
+
+        os.chdir(os.sep.join([str(org_path), "utils"]))
+        image1 = PhotoImage(file= "IEL lab logo5.png")
+        # smaller_image1 = image1.subsample(2, 2)
+        smaller_image1 = image1
+
+        image_frame = Frame(ctr_left, bg='gray1')
+        image_frame.grid(row=15, pady=(20,0))
+
+        panel1 = Label(image_frame, image = smaller_image1, bg ='gray1',borderwidth=0, highlightthickness=0)
+        panel1.photo = smaller_image1
+        panel1.grid(row=0, column=0)
+
+        def callback(url):
+            webbrowser.open_new(url)
+
+        link1 = Label(image_frame, text=" Intelligent Enterprise Lab.", bg = 'gray1', fg="cyan2", cursor="hand2")
+        link1.bind("<Button-1>", lambda e: callback("http://iel.unist.ac.kr/?page=introduction"))
+        link1.grid(row=0, column=1, sticky='w')
+
+
+
+        image2 = PhotoImage(file= "GitHub-Mark-Light-32px.png")
+        # smaller_image2 = image2.subsample(1, 1)
+        smaller_image2=image2
+
+
+        panel2 = Label(image_frame, image = smaller_image2, bg ='gray1',borderwidth=0, highlightthickness=0)
+        panel2.photo = smaller_image2
+        panel2.grid(row=1, column=0, pady=5)
+
+        link2 = Label(image_frame, text=" Github repository", bg = 'gray1', fg="cyan2", cursor="hand2")
+        link2.bind("<Button-1>", lambda e: callback("https://github.com/jonghyeonk/AIR-BAGEL"))
+        link2.grid(row=1, column=1, pady=5, sticky='w')
+
+        os.chdir(os.sep.join([str(org_path), "input"]))
+
 
         # Select key attribute (center-right)
         ctr_right_label1 = Label(ctr_right, text='Environment', font=("Consolas", 10, 'bold'),

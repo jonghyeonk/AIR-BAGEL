@@ -182,10 +182,10 @@ class PageThree(tk.Frame):
             treeview2.heading("one", text="Values")
 
             sum_res = self.data_with_parameter_res.groupby(["Resource"], as_index=False).count()
-            fail_res = self.data_with_parameter_res.groupby(["Resource"], as_index=False)["Resource_Pass/Fail"].sum()
+            fail_res = self.data_with_parameter_res.groupby(["Resource"], as_index=False)["Resource_Anomaly/Normal"].sum()
             rate_res = pd.merge(sum_res, fail_res, on="Resource", how="outer")
 
-            rate_res["rate"] = rate_res["Resource_Pass/Fail_y"] / rate_res["Resource_Pass/Fail_x"]
+            rate_res["rate"] = rate_res["Resource_Anomaly/Normal_y"] / rate_res["Resource_Anomaly/Normal_x"]
             res_mean = round(np.mean(rate_res["rate"]), 6)
             res_max = round(np.max(rate_res["rate"]), 6)
             res_min = round(np.min(rate_res["rate"]), 6)
@@ -315,9 +315,9 @@ class PageThree(tk.Frame):
             sys = treeview2.insert('', 'end', text="# of systems",
                                    values=sys_val, iid="System", tags="tag3")
 
-            sys_top = treeview2.insert(sys, 'end', text='System down time',
+            sys_top = treeview2.insert(sys, 'end', text='system malfunctioning time',
                                        iid=11, tags="tag4")
-            sys_top_n = treeview2.insert(sys_top, 'end', text='# of system down',
+            sys_top_n = treeview2.insert(sys_top, 'end', text='# of system malfunctioning',
                                          values=[len(self.df_sys.index)], iid=12)
             sys_top_mean = treeview2.insert(sys_top, 'end', text='Average',
                                             values=[np.mean(self.df_sys["down_duration"])], iid=13)
@@ -330,7 +330,7 @@ class PageThree(tk.Frame):
                                        iid=16, tags="tag4")
 
             for i in range(len(sys_top5.index)):
-                sb1 = str(sys_top5.loc[sys_top5.index[i], 'Event:system down'])
+                sb1 = str(sys_top5.loc[sys_top5.index[i], 'Event:system malfunctioning'])
                 sb2 = str(sys_top5.loc[sys_top5.index[i]]['down_duration'])
                 globals()['sys_bot{}'] = treeview2.insert(sys_bot, 'end', text=sb1,
                                                           values=[sb2], iid=17 + i)
@@ -459,10 +459,10 @@ class PageThree(tk.Frame):
             treeview2.heading("one", text="Values")
 
             sum_res = self.data_with_parameter_res.groupby(["Resource"], as_index=False).count()
-            fail_res = self.data_with_parameter_res.groupby(["Resource"], as_index=False)["Resource_Pass/Fail"].sum()
+            fail_res = self.data_with_parameter_res.groupby(["Resource"], as_index=False)["Resource_Anomaly/Normal"].sum()
             rate_res = pd.merge(sum_res, fail_res, on="Resource", how="outer")
 
-            rate_res["rate"] = rate_res["Resource_Pass/Fail_y"] / rate_res["Resource_Pass/Fail_x"]
+            rate_res["rate"] = rate_res["Resource_Anomaly/Normal_y"] / rate_res["Resource_Anomaly/Normal_x"]
             res_mean = round(np.mean(rate_res["rate"]), 6)
             res_max = round(np.max(rate_res["rate"]), 6)
             res_min = round(np.min(rate_res["rate"]), 6)
@@ -504,9 +504,9 @@ class PageThree(tk.Frame):
                 globals()['res_bot{}'] = treeview2.insert(res_bot, 'end', text=rb1,
                                                           values=rb2, iid=6 + i)
 
-            sys_top = treeview2.insert(sys, 'end', text='System down time',
+            sys_top = treeview2.insert(sys, 'end', text='system malfunctioning time',
                                        iid=11, tags="tag4")
-            sys_top_n = treeview2.insert(sys_top, 'end', text='# of system down',
+            sys_top_n = treeview2.insert(sys_top, 'end', text='# of system malfunctioning',
                                          values=[len(self.df_sys.index)], iid=12)
             sys_top_mean = treeview2.insert(sys_top, 'end', text='Average',
                                             values=[np.mean(self.df_sys["down_duration"])], iid=13)
@@ -519,7 +519,7 @@ class PageThree(tk.Frame):
                                        iid=16, tags="tag4")
 
             for i in range(len(sys_top5.index)):
-                sb1 = str(sys_top5.loc[sys_top5.index[i], 'Event:system down'])
+                sb1 = str(sys_top5.loc[sys_top5.index[i], 'Event:system malfunctioning'])
                 sb2 = str(sys_top5.loc[sys_top5.index[i]]['down_duration'])
                 globals()['sys_bot{}'] = treeview2.insert(sys_bot, 'end', text=sb1,
                                                           values=[sb2], iid=17 + i)
@@ -548,7 +548,7 @@ class PageThree(tk.Frame):
         # process map (inductive miner)
 
 
-        ctr_mid_label2 = LabelFrame(ctr_mid, text=" Process Map (Inductive Miner) ", font=("Consolas", 10, 'bold'),
+        ctr_mid_label2 = LabelFrame(ctr_mid, text=" Process model (Inductive Miner) ", font=("Consolas", 10, 'bold'),
                                     fg="white", bg='gray1', bd=3, padx=14, pady=7)
         ctr_mid_label2.grid(row=1, column=0, sticky="nsew", padx=10, pady=10)
 

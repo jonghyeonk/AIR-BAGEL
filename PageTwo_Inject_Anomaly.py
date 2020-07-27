@@ -131,7 +131,7 @@ class Inject_Anomaly(tk.Frame):
             t01.grid(row=0, column=10, sticky="nwse")
             t01.grid_rowconfigure(0, weight=1)
             t01.grid_columnconfigure(0, weight=1)
-            txt01 = Label(t01, text='Weight', font=("Consolas", 10, 'bold'),
+            txt01 = Label(t01, text='Strength', font=("Consolas", 10, 'bold'),
                           fg="white", bg='gray25', anchor="center", width=10)
             txt01.grid(row=0, column=0, sticky="nwse", padx=2, pady=2)
             txt01.grid_rowconfigure(0, weight=1)
@@ -205,7 +205,7 @@ class Inject_Anomaly(tk.Frame):
             but_implement_sys = tk.Button(base_frame, text="Apply", width=10,
                                           command=lambda: [isok(), seedBox(seedBox2), Abnorm_sys(sys_file=self.system_down, log_file=self.data_with_system, old_file=None).implement_sys_single(df_log=None, df_sys=None,
                                               types_sys=self.apply_type_sys(parent),
-                                              mag_sys=[self.apply_w_skip_sys(parent), self.apply_w_form_sys(parent), self.apply_w_cut_sys(parent)])])    # system_down = system down log, data_with_system = event log(system)
+                                              mag_sys=[self.apply_w_skip_sys(parent), self.apply_w_form_sys(parent), self.apply_w_cut_sys(parent)])])    # system_down = malfunctioning log, data_with_system = event log(system)
             but_implement_sys.grid(row=1, column=0, sticky="e", padx=10, pady=10)
 
             action2 = tk.Button(base_frame, text="See result", width=10,
@@ -233,7 +233,7 @@ class Inject_Anomaly(tk.Frame):
             t01.grid(row=0, column=10, sticky="nwse")
             t01.grid_rowconfigure(0, weight=1)
             t01.grid_columnconfigure(0, weight=1)
-            txt01 = Label(t01, text='Weight', font=("Consolas", 10, 'bold'),
+            txt01 = Label(t01, text='Strength', font=("Consolas", 10, 'bold'),
                           fg="white", bg='gray25', anchor="center", width=10)
             txt01.grid(row=0, column=0, sticky="nwse", padx=2, pady=2)
             txt01.grid_rowconfigure(0, weight=1)
@@ -367,7 +367,7 @@ class Inject_Anomaly(tk.Frame):
         table01.grid(row=0, column=10, sticky='nwse')
         table01.grid_rowconfigure(0, weight=1)
         table01.grid_columnconfigure(0, weight=1)
-        text01 = Label(table01, text='Weight', font=("Consolas", 10, 'bold'),
+        text01 = Label(table01, text='Strength', font=("Consolas", 10, 'bold'),
                        fg="white", bg='gray25', anchor="center", width=10)
         text01.grid(row=0, column=0, sticky="nwse", padx=2, pady=2)
         text01.grid_rowconfigure(0, weight=1)

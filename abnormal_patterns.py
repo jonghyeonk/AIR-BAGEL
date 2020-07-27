@@ -38,20 +38,20 @@ class Abnorm_p():
                 pass
         types_a = np.array(types)
         df = df.sort_values(by=["Case", "Timestamp"], ascending=[True, True])
-        df["cusum"] = df.groupby(["Case"])["Resource_Pass/Fail"].cumsum()
+        df["cusum"] = df.groupby(["Case"])["Resource_Anomaly/Normal"].cumsum()
         df["type"] = np.nan
         if sum(mag) == 1:
-            num_fail = df["Resource_Pass/Fail"].sum()
+            num_fail = df["Resource_Anomaly/Normal"].sum()
             applied_patterns = np.repeat(random.choice(types), num_fail)
-            fail_df = df[df["Resource_Pass/Fail"] == 1]
-            clean_df = df[df["Resource_Pass/Fail"] == 0]
+            fail_df = df[df["Resource_Anomaly/Normal"] == 1]
+            clean_df = df[df["Resource_Anomaly/Normal"] == 0]
             fail_df["type"] = applied_patterns
             df = pd.concat([clean_df, fail_df], ignore_index=True)
         else:
             applied_patterns = np.repeat(types_a, mag_c)
-            fail_df = df[(df["Resource_Pass/Fail"] == 1) & (df["cusum"] == 1)]
-            clean_df1 = df[df["Resource_Pass/Fail"] == 0]
-            clean_df2 = df[(df["Resource_Pass/Fail"] == 1) & (df["cusum"] > 1)]
+            fail_df = df[(df["Resource_Anomaly/Normal"] == 1) & (df["cusum"] == 1)]
+            clean_df1 = df[df["Resource_Anomaly/Normal"] == 0]
+            clean_df2 = df[(df["Resource_Anomaly/Normal"] == 1) & (df["cusum"] > 1)]
             fail_df["type"] = fail_df["type"].apply(lambda x: random.choice(applied_patterns))
             df = pd.concat([clean_df1, clean_df2, fail_df], ignore_index=True)
         return df
@@ -70,36 +70,36 @@ class Abnorm_p():
         df_new["duration"] = df_c["Timestamp"] - df_new["Timestamp"]  #duration = time interval between events
         df_new.loc[(df_new["order"] == df_new["max"]), "duration"] = datetime.timedelta()
         df_new["duration"] = df_new.apply(lambda x: x["duration"].seconds, axis=1)
-        df_ct = df_new.loc[(df_new["Resource_Pass/Fail"] == 1) & (df_new["cusum"] == 1) & (df_new["type"] is not np.nan)]
+        df_ct = df_new.loc[(df_new["Resource_Anomaly/Normal"] == 1) & (df_new["cusum"] == 1) & (df_new["type"] is not np.nan)]
         df_ct["resource_anomaly_type"] = df_ct["type"]
         df_ct = df_ct[["Case", "resource_anomaly_type"]]
         df_new = pd.merge(df_new, df_ct, on="Case", how="outer")
         df_new.loc[df_new["resource_anomaly_type"].isna(), "resource_anomaly_type"] = "normal"
         if "skip" in df_new["type"].unique():
-            df_new.loc[(df_new["Resource_Pass/Fail"] == 1) & (df_new["cusum"] == 1) & (df_new["type"] == "skip"), "parameter_l"] = 1
-            df_new.loc[(df_new["Resource_Pass/Fail"] == 1) & (df_new["cusum"] == 1) & (df_new["type"] == "skip"), "parameter_r"] = 1
+            df_new.loc[(df_new["Resource_Anomaly/Normal"] == 1) & (df_new["cusum"] == 1) & (df_new["type"] == "skip"), "parameter_l"] = 1
+            df_new.loc[(df_new["Resource_Anomaly/Normal"] == 1) & (df_new["cusum"] == 1) & (df_new["type"] == "skip"), "parameter_r"] = 1
         else:
             pass
         if "form based" in df_new["type"].unique():
             if m_form < 2:
                 m_form = 2
-            df_new.loc[(df_new["Resource_Pass/Fail"] == 1) & (df_new["cusum"] == 1) & (df_new["type"] == "form based"), "parameter_l"] = df_new["max"] - df_new["order"] + 1
-            df_new.loc[(df_new["Resource_Pass/Fail"] == 1) & (df_new["cusum"] == 1) & (df_new["type"] == "form based"), "parameter_r"] = df_new["parameter_r"].apply(lambda x:random.randint(2, m_form))
+            df_new.loc[(df_new["Resource_Anomaly/Normal"] == 1) & (df_new["cusum"] == 1) & (df_new["type"] == "form based"), "parameter_l"] = df_new["max"] - df_new["order"] + 1
+            df_new.loc[(df_new["Resource_Anomaly/Normal"] == 1) & (df_new["cusum"] == 1) & (df_new["type"] == "form based"), "parameter_r"] = df_new["parameter_r"].apply(lambda x:random.randint(2, m_form))
         else:
             pass
         if "rework" in df_new["type"].unique():
-            df_new.loc[(df_new["Resource_Pass/Fail"] == 1) & (df_new["cusum"] == 1) & (df_new["type"] == "rework"), "parameter_l"] = df_new["max"] - df_new["order"] + 1
-            df_new.loc[(df_new["Resource_Pass/Fail"] == 1) & (df_new["cusum"] == 1) & (df_new["type"] == "rework"), "parameter_r"] = df_new["parameter_r"].apply(lambda x:random.randint(1, m_rework))
+            df_new.loc[(df_new["Resource_Anomaly/Normal"] == 1) & (df_new["cusum"] == 1) & (df_new["type"] == "rework"), "parameter_l"] = df_new["max"] - df_new["order"] + 1
+            df_new.loc[(df_new["Resource_Anomaly/Normal"] == 1) & (df_new["cusum"] == 1) & (df_new["type"] == "rework"), "parameter_r"] = df_new["parameter_r"].apply(lambda x:random.randint(1, m_rework))
         else:
             pass
         if "switch" in df_new["type"].unique():
-            df_new.loc[(df_new["Resource_Pass/Fail"] == 1) & (df_new["cusum"] == 1) & (df_new["type"] == "switch"), "parameter_l"] = 1
-            df_new.loc[(df_new["Resource_Pass/Fail"] == 1) & (df_new["cusum"] == 1) & (df_new["type"] == "switch"), "parameter_r"] = df_new["parameter_r"].apply(lambda x:random.randint(1, m_switch))
+            df_new.loc[(df_new["Resource_Anomaly/Normal"] == 1) & (df_new["cusum"] == 1) & (df_new["type"] == "switch"), "parameter_l"] = 1
+            df_new.loc[(df_new["Resource_Anomaly/Normal"] == 1) & (df_new["cusum"] == 1) & (df_new["type"] == "switch"), "parameter_r"] = df_new["parameter_r"].apply(lambda x:random.randint(1, m_switch))
         else:
             pass
         if "replace" in df_new["type"].unique():
-            df_new.loc[(df_new["Resource_Pass/Fail"] == 1) & (df_new["cusum"] == 1) & (df_new["type"] == "replace"), "parameter_l"] = 1
-            df_new.loc[(df_new["Resource_Pass/Fail"] == 1) & (df_new["cusum"] == 1) & (df_new["type"] == "replace"), "parameter_r"] = df_new["parameter_r"].apply(lambda x:random.randint(1, m_replace))
+            df_new.loc[(df_new["Resource_Anomaly/Normal"] == 1) & (df_new["cusum"] == 1) & (df_new["type"] == "replace"), "parameter_l"] = 1
+            df_new.loc[(df_new["Resource_Anomaly/Normal"] == 1) & (df_new["cusum"] == 1) & (df_new["type"] == "replace"), "parameter_r"] = df_new["parameter_r"].apply(lambda x:random.randint(1, m_replace))
         else:
             pass
         if df_new["parameter_r"].all() != np.nan:
@@ -108,15 +108,15 @@ class Abnorm_p():
         else:
             pass
         if "moved" in df_new["type"].unique():
-            df_new.loc[(df_new["Resource_Pass/Fail"] == 1) & (df_new["type"] == "moved"), "parameter"] = df_new["parameter_r"].apply(lambda x:random.randint(-h_moved, h_moved))
+            df_new.loc[(df_new["Resource_Anomaly/Normal"] == 1) & (df_new["type"] == "moved"), "parameter"] = df_new["parameter_r"].apply(lambda x:random.randint(-h_moved, h_moved))
         else:
             pass
         if "insert" in df_new["type"].unique():
-            df_new.loc[(df_new["Resource_Pass/Fail"] == 1) & (df_new["cusum"] == 1) & (df_new["type"] == "insert"), "parameter"] = df_new["parameter"].apply(lambda x: random.randint(1, m_insert))
+            df_new.loc[(df_new["Resource_Anomaly/Normal"] == 1) & (df_new["cusum"] == 1) & (df_new["type"] == "insert"), "parameter"] = df_new["parameter"].apply(lambda x: random.randint(1, m_insert))
         else:
             pass
         if "incomplete" in df_new["type"].unique():
-            df_new.loc[(df_new["Resource_Pass/Fail"] == 1) & (df_new["cusum"] == 1) & (df_new["type"] == "incomplete"), "parameter"] = df_new["max"] - df_new["order"] + 1
+            df_new.loc[(df_new["Resource_Anomaly/Normal"] == 1) & (df_new["cusum"] == 1) & (df_new["type"] == "incomplete"), "parameter"] = df_new["max"] - df_new["order"] + 1
         else:
             pass
         if "switch" in list(df_new["type"]):
@@ -136,11 +136,11 @@ class Abnorm_p():
             df_new = pd.concat([m_case, n_case, a_case])
         else:
             pass
-        df_p = df_new.loc[(df_new["Resource_Pass/Fail"] == 1) & (df_new["cusum"] == 1) & (df_new["type"] is not np.nan)]
+        df_p = df_new.loc[(df_new["Resource_Anomaly/Normal"] == 1) & (df_new["cusum"] == 1) & (df_new["type"] is not np.nan)]
         df_p["resource_parameter"] = df_p.apply(lambda x: "loc = {0}, len = {1}".format(x["order"], x["parameter"]) if x["resource_anomaly_type"] != "form based" else "loc = {0}, len = {1}".format(x["order"], x["parameter"]), axis=1)
         df_p = df_p[["Case", "resource_parameter"]]
         df_new = pd.merge(df_new, df_p, on="Case", how="outer")
-        df_new["Resource_Pass/Fail"] = df_new.apply(lambda x: 0 if (x["Resource_Pass/Fail"] == 1) & (x["cusum"] != 1) else x["Resource_Pass/Fail"], axis=1)
+        df_new["Resource_Anomaly/Normal"] = df_new.apply(lambda x: 0 if (x["Resource_Anomaly/Normal"] == 1) & (x["cusum"] != 1) else x["Resource_Anomaly/Normal"], axis=1)
         df_new.reset_index(drop=True, inplace=True)
         global data_with_parameter_res
         data_with_parameter_res = df_new
@@ -168,7 +168,7 @@ class Abnorm_p():
 
         df_new = pd.DataFrame.copy(df)
         df_new["resource_check2"] = np.nan
-        df_ct = df_new.loc[(df_new["Resource_Pass/Fail"] == 1) & (df_new["cusum"] == 1) & (df_new["type"] == "form based")]
+        df_ct = df_new.loc[(df_new["Resource_Anomaly/Normal"] == 1) & (df_new["cusum"] == 1) & (df_new["type"] == "form based")]
         df_ct["resource_check1"] = df_ct["Resource"]
         df_ct = df_ct[["Case", "resource_check1"]]
         df_new = pd.merge(df_new, df_ct, on="Case", how="outer")
@@ -214,9 +214,9 @@ class Abnorm_p():
         df_new = pd.DataFrame.copy(df)
         df_new["resource_parameter"] = np.where(df_new["type"] == "moved", df_new.apply(lambda x: "eventID = {0}, duration = {1}".format(x["Event"], x["parameter"]), axis=1), df_new["resource_parameter"])
         df_new["resource_parameter"] = np.where((df_new["type"] != "moved") & (df_new["resource_anomaly_type"] == "moved"), np.nan, df_new["resource_parameter"])
-        moved_c = df_new[df_new["Resource_Pass/Fail"] == 0]
-        moved_f = df_new[(df_new["Resource_Pass/Fail"] == 1) & (df_new["type"] == "moved")]
-        moved_a = df_new[(df_new["Resource_Pass/Fail"] == 1) & (df_new["type"] != "moved")]
+        moved_c = df_new[df_new["Resource_Anomaly/Normal"] == 0]
+        moved_f = df_new[(df_new["Resource_Anomaly/Normal"] == 1) & (df_new["type"] == "moved")]
+        moved_a = df_new[(df_new["Resource_Anomaly/Normal"] == 1) & (df_new["type"] != "moved")]
         moved_c.reset_index(drop=True, inplace=True)
         moved_f.reset_index(drop=True, inplace=True)
         moved_a.reset_index(drop=True, inplace=True)
@@ -433,10 +433,10 @@ class Abnorm_p():
 
         df_new["order_b"] = df_new["order"]
         df_new["trace_temp"] = np.nan
-        df_new["trace_change_resource"] = np.nan
+        df_new["is_trace_anomalous(resource)"] = np.nan
         df_new = df_new.sort_values(by=["Case", "Timestamp"], ascending=[True, True])
-        df_new["Resource_Pass/Fail"] = pd.to_numeric(df_new["Resource_Pass/Fail"])
-        df_new["cusum"] = df_new.groupby(["Case"])["Resource_Pass/Fail"].cumsum()
+        df_new["Resource_Anomaly/Normal"] = pd.to_numeric(df_new["Resource_Anomaly/Normal"])
+        df_new["cusum"] = df_new.groupby(["Case"])["Resource_Anomaly/Normal"].cumsum()
         df_2 = pd.DataFrame.copy(df_new)
         df_2["check"] = 1
         df_new["order"] = df_2.groupby(["Case"])["check"].cumsum()
@@ -446,9 +446,9 @@ class Abnorm_p():
         df_new.loc[(df_new["order"] == df_new["max"]), "duration"] = datetime.timedelta()
         df_new["duration"] = df_new.apply(lambda x: x["duration"].seconds, axis=1)
         df_new["trace_temp"] = np.where(df_new["order"] != df_new["order_b"], 1, 0)
-        df_new["trace_change_resource"] = df_new.groupby(["Case"])["trace_temp"].transform("max")
-        df_new["trace_change_resource"] = np.where((df_new["resource_anomaly_type"] == "skip") | (df_new["resource_anomaly_type"] == "switch_from") | (df_new["resource_anomaly_type"] == "switch_to") | (df_new["resource_anomaly_type"] == "incomplete") | (df_new["resource_anomaly_type"] == "replace"), 1, df_new["trace_change_resource"])
-        df_new = df_new[["Case", "Event", "Activity", "Timestamp", "Resource", "Resource_failure_rate", "Resource_Pass/Fail", "order", "resource_anomaly_type", "resource_parameter", "trace_change_resource"]]
+        df_new["is_trace_anomalous(resource)"] = df_new.groupby(["Case"])["trace_temp"].transform("max")
+        df_new["is_trace_anomalous(resource)"] = np.where((df_new["resource_anomaly_type"] == "skip") | (df_new["resource_anomaly_type"] == "switch_from") | (df_new["resource_anomaly_type"] == "switch_to") | (df_new["resource_anomaly_type"] == "incomplete") | (df_new["resource_anomaly_type"] == "replace"), 1, df_new["is_trace_anomalous(resource)"])
+        df_new = df_new[["Case", "Event", "Activity", "Timestamp", "Resource", "Resource_failure_rate", "Resource_Anomaly/Normal", "order", "resource_anomaly_type", "resource_parameter", "is_trace_anomalous(resource)"]]
         end_inject = datetime.datetime.now()
         Inject_Anomaly.text_progress.insert(tk.END, "<Resource> Finished to inject anomaly patterns (running time={0})\n".format(end_inject-start_inject))
         Inject_Anomaly.parent.update()
