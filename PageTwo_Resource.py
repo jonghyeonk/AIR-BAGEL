@@ -345,6 +345,8 @@ class Resource_Step1(tk.Toplevel):    # resource- failure rate
                 lamb = float(textBox1.get("1.0", "end-1c"))
                 resourcelist2 = self.resourcelist
                 resourcelist2["Resource_failure_rate"] = numpy.random.exponential(lamb, len(self.resourcelist))
+                resourcelist2.loc[ (resourcelist2["Resource_failure_rate"] < 0), "Resource_failure_rate"] = 0
+                resourcelist2.loc[ (resourcelist2["Resource_failure_rate"] > 1), "Resource_failure_rate"] = 1
                 numpy.random.seed(0)
                 mylist2.delete('1.0', END)
                 mylist2.insert(tk.CURRENT, resourcelist2[0:len(self.resourcelist)].to_string(index=False))
@@ -362,6 +364,8 @@ class Resource_Step1(tk.Toplevel):    # resource- failure rate
                 resourcelist2 = self.resourcelist
                 resourcelist2["Resource_failure_rate"] = numpy.random.normal(mean, sd, len(self.resourcelist))
                 resourcelist2.loc[ (resourcelist2["Resource_failure_rate"] < 0), "Resource_failure_rate"] = 0
+                resourcelist2.loc[ (resourcelist2["Resource_failure_rate"] > 1), "Resource_failure_rate"] = 1
+
                 numpy.random.seed(0)
                 mylist2.delete('1.0', END)
                 mylist2.insert(tk.CURRENT, resourcelist2[0:len(self.resourcelist)].to_string(index=False))
@@ -379,6 +383,8 @@ class Resource_Step1(tk.Toplevel):    # resource- failure rate
                 b = float(textBox5.get("1.0", "end-1c"))
                 resourcelist2 = self.resourcelist
                 resourcelist2["Resource_failure_rate"] = numpy.random.uniform(a, b, len(self.resourcelist))
+                resourcelist2.loc[ (resourcelist2["Resource_failure_rate"] < 0), "Resource_failure_rate"] = 0
+                resourcelist2.loc[ (resourcelist2["Resource_failure_rate"] > 1), "Resource_failure_rate"] = 1
                 resourcelist2 = resourcelist2[['Resource', 'Frequency','Resource_failure_rate', 'Activities']]
                 numpy.random.seed(0)
                 mylist2.delete('1.0', END)
