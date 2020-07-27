@@ -144,7 +144,7 @@ class PageTwo(tk.Frame):
         System_Step1.event_log = self.event_log         #orginal data without preprocessing
         System_step1_self.event_log = self.event_log
 
-        System_Label1 = ttk.Checkbutton(ctr_mid_subframe1, text=" System down interval: ", variable=self.cVar2, width=25,
+        System_Label1 = ttk.Checkbutton(ctr_mid_subframe1, text=" System malfunctioning interval: ", variable=self.cVar2, width=25,
                                   onvalue=1, offvalue=0, style='Red.TCheckbutton')
         System_Label1.grid(row=1, column=0, sticky='w')
 
