@@ -71,6 +71,8 @@ class System_step1_self(tk.Toplevel):
         self.cVar1 = IntVar()
         s = ttk.Style()
         s.configure('Red.TCheckbutton', foreground="aquamarine", background='gray1')
+        s.map('Red.TCheckbutton', background=[('active', 'gray1')])
+
         sub_frame0 = Frame(system_info_frame1, bg='gray1', width=500)
         sub_frame0.grid(row=0, column=0, sticky='w', pady=(0,3))
         sub_frame0_label1 = ttk.Checkbutton(sub_frame0, text="Select a system attribute from existing dataframe: ", variable=self.cVar1, width=8,

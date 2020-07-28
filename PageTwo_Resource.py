@@ -58,6 +58,7 @@ class Resource_Step1(tk.Toplevel):    # resource- failure rate
         self.cVar1 = IntVar()
         s = ttk.Style()
         s.configure('Red.TCheckbutton', foreground="aquamarine", background='gray1')
+        s.map('Red.TCheckbutton', background=[('active', 'gray1')])
 
         sub_frame0 = Frame(system_info_frame1, bg='gray1', width=400)
         sub_frame0.grid(row=0, column=0, pady=(0,3), sticky='w')
@@ -266,6 +267,7 @@ class Resource_Step1(tk.Toplevel):    # resource- failure rate
 
         s = ttk.Style()
         s.configure('Red.TCheckbutton', foreground="aquamarine" ,background='gray1')
+        s.map('Red.TCheckbutton', background=[('active', 'gray1')])
 
         # exponentital dist. parameter (right)
         bace_c1 = ttk.Checkbutton(base_frame_label2, text="Exponetial dist. (\u03BB)", variable = root.cVar2, width=20,

@@ -61,6 +61,7 @@ class System_Step1(tk.Toplevel):
         self.cVar1 = IntVar()
         s = ttk.Style()
         s.configure('Red.TCheckbutton', foreground="aquamarine", background='gray1')
+        s.map('Red.TCheckbutton', background=[('active', 'gray1')])
 
         sub_frame0 = Frame(system_info_frame1, bg='gray1', width=500)
         sub_frame0.grid(row=0, column=0, pady=(0,3),sticky='w')
@@ -202,7 +203,7 @@ class System_Step1(tk.Toplevel):
 
         s = ttk.Style()
         s.configure('Red.TCheckbutton', foreground="aquamarine" ,background='gray1')
-
+        s.map('Red.TCheckbutton', background=[('active', 'gray1')])
         # input poisson parameter (center-right)
 
         # Set seed (center-right)

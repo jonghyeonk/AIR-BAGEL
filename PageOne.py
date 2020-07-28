@@ -254,6 +254,7 @@ class PageOne(tk.Frame):
         ctr_left_label2.grid_propagate(False)
         style1 = ttk.Style()
         style1.configure("Red.TCheckbutton", foreground="aquamarine", background='gray1')
+        style1.map('Red.TCheckbutton', background=[('active', 'gray1')])
         i = 0
         self.cVar1 = IntVar()
         self.cVar1.set(0)

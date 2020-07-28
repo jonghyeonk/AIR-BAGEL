@@ -120,6 +120,8 @@ class PageTwo(tk.Frame):
 
         s = ttk.Style()
         s.configure('Red.TCheckbutton', foreground="white", background='gray1', font=("Consolas", 10, 'bold'))
+        s.map('Red.TCheckbutton', background=[('active', 'gray1')])
+
         Resource_Label1 = ttk.Checkbutton(ctr_mid_subframe1, text=" Failure rate of Resource: ", variable=self.cVar1, width=27,
                                   onvalue=1, offvalue=0, style='Red.TCheckbutton')
         Resource_Label1.grid(row=0, column=0, sticky='w')

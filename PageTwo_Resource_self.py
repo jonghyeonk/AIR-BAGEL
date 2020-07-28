@@ -72,6 +72,8 @@ class Resource_step1_self(tk.Toplevel):
         self.cVar1 = IntVar()
         s = ttk.Style()
         s.configure('Red.TCheckbutton', foreground="aquamarine", background='gray1')
+        s.map('Red.TCheckbutton', background=[('active', 'gray1')])
+
         sub_frame0 = Frame(resource_info_frame1, bg='gray1', width=600)
         sub_frame0.grid(row=0, column=0, pady=(0,3), sticky='w')
         sub_frame0_label1 = ttk.Checkbutton(sub_frame0, text="Select a resource attribute from existing dataframe: ",

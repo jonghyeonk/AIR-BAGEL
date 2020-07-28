@@ -560,11 +560,11 @@ class PageThree(tk.Frame):
 
         # before
         before_c = Label(ctr_mid_subframe2, text=" (A) Petri-net before injecting anomalies",
-                                   width=32,foreground="aquamarine", background='gray1', anchor="w")
+                                   width=34,foreground="aquamarine", background='gray1', anchor="w")
         before_c.grid(row=0, column=0, sticky='w',padx=(0,15))
 
         # after
-        after_c = Label(ctr_mid_subframe2, text=" (B) Petri-net after injecting anomalies",  width=32,
+        after_c = Label(ctr_mid_subframe2, text=" (B) Petri-net after injecting anomalies",  width=34,
                                    foreground="aquamarine", background='gray1',anchor="w")
         after_c.grid(row=1, column=0, sticky='w', padx=(0,15))
         global b_click

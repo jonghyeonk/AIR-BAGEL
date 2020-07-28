@@ -333,7 +333,7 @@ class Inject_Anomaly(tk.Frame):
 
         s = ttk.Style()
         s.configure('Red.TCheckbutton', foreground="aquamarine", background='gray40')
-
+        s.map('Red.TCheckbutton', background=[('active', 'gray40')])
 
         # Set seed - resource (mid)
         seed_frame1 = Frame(base_frame_label2, bg='gray30', relief='ridge', borderwidth=2, width=15)
@@ -661,6 +661,7 @@ class Inject_Anomaly(tk.Frame):
 
         s = ttk.Style()
         s.configure('Red.TCheckbutton', foreground="aquamarine", background='gray40')
+        s.map('Red.TCheckbutton', background=[('active', 'gray40')])
 
     # "able_X" check resource error type "X" to make writing parameter & weight possible/impossible
     def able_skip(self, parent):
