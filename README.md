@@ -22,15 +22,6 @@ AIR-BAGEL is a tool to generate pseudo-real trace-level anomalies in event logs.
 ## Setup
 See the tutorial document airbagel-tutorial.pdf.
 
-## Features
-List of features ready and TODOs for future development
-* Awesome feature 1
-* Awesome feature 2
-* Awesome feature 3
-
-To-do list:
-* Wow improvement to be done 1
-* Wow improvement to be done 2
 
 ## Status
 Project is: _in progress_
