@@ -421,7 +421,7 @@ class System_Step1_sub(tk.Toplevel):    # resource- failure rate
         canvas = Canvas(sub_frame2, bd=0, bg='gray1', highlightthickness=0)
         canvas.grid(row=0, column=0, sticky="news")
         vsb = tk.Scrollbar(sub_frame2, orient="vertical", command=canvas.yview)
-        vsb.grid(row=0, column=1, sticky='ns')
+        vsb.grid(row=0, column=1, padx=(2,0), sticky='nsw')
         canvas.configure(yscrollcommand=vsb.set)
 
         frame_buttons = Frame(canvas, bg='gray1')
@@ -432,11 +432,10 @@ class System_Step1_sub(tk.Toplevel):    # resource- failure rate
             k += 1
             globals()['act{}'.format(k)] = Label(frame_buttons, text='{} = '.format(i), font=("Consolas", 10, 'bold'),
                                   fg="white", bg='gray1' ,anchor="w")
-            globals()['act{}'.format(k)].grid(row= k-1, column= 0)
-            globals()['act{}'.format(k)].config(width=30)
+            globals()['act{}'.format(k)].grid(row= k-1, column= 0, sticky='w')
             globals()['dist3{}'.format(k)] = tk.StringVar()
             globals()['act{}_sys'.format(k)] = ttk.Combobox(frame_buttons, width=10, textvariable=['dist3{}'.format(k)])
-            globals()['act{}_sys'.format(k)].grid(row= k-1, column= 1)
+            globals()['act{}_sys'.format(k)].grid(row= k-1, column= 1, padx=(0,3))
 
         frame_buttons.update_idletasks()
         sub_frame2.config(width=350, height=240)

@@ -66,7 +66,7 @@ class Resource_Step1(tk.Toplevel):    # resource- failure rate
                                   onvalue=1, style='Red.TCheckbutton')
         sub_frame0_label1.grid(row=0, column=0, sticky="w", padx=(0 ,1))
 
-        resource_chosen = ttk.Combobox(sub_frame0, width=15, textvariable=tk.StringVar())
+        resource_chosen = ttk.Combobox(sub_frame0, width=16, textvariable=tk.StringVar())
         resource_chosen.grid(row=0, column=1)
         resource_chosen['values'] = list(self.event_log)  # original data without any preprocessing
 
@@ -458,12 +458,12 @@ class Resource_Step1_sub(tk.Toplevel):    # resource- failure rate
         }
         activitylist = self.extracted_data.groupby('Activity').agg(params).reset_index()
         resource_info_frame1 = LabelFrame(base_frame, text="The number of groups ={}".format(self.ngroup), font=("Consolas", 10, 'bold'),
-                                          fg="white", bg='gray1', bd=3, padx=12 , pady=14)
+                                          fg="white", bg='gray1', bd=3)
         resource_info_frame1.grid(row=1, column=0, padx=10, sticky='nsw')
 
         #
         sub_frame4 = Frame(resource_info_frame1, bg='gray1')
-        sub_frame4.grid(row=0, column=0, sticky='w', padx=10, pady=10)
+        sub_frame4.grid(row=0, column=0, sticky='wns', padx=10, pady=10)
 
         sub_frame4.rowconfigure(0, weight=1)
         sub_frame4.columnconfigure(0, weight=1)
@@ -472,7 +472,7 @@ class Resource_Step1_sub(tk.Toplevel):    # resource- failure rate
         canvas1 = Canvas(sub_frame4, bd=0, bg='gray1', highlightthickness=0)
         canvas1.grid(row=0, column=0, sticky="news")
         vsb = tk.Scrollbar(sub_frame4, orient="vertical", command=canvas1.yview)
-        vsb.grid(row=0, column=1, sticky='ns')
+        vsb.grid(row=0, column=1, padx= (2,0), sticky='nsw')
         canvas1.configure(yscrollcommand=vsb.set)
 
         frame_buttons1 = Frame(canvas1, bg='gray1')
@@ -484,7 +484,6 @@ class Resource_Step1_sub(tk.Toplevel):    # resource- failure rate
             globals()['grp{}'.format(k)] = Label(frame_buttons1, text='Size: Resource_Group{} = '.format(i), font=("Consolas", 10, 'bold'),
                                   fg="white", bg='gray1' ,anchor="w")
             globals()['grp{}'.format(k)].grid(row= k-1, column= 0)
-            globals()['grp{}'.format(k)].config(width=26)
             globals()['grp{}_size'.format(k)] = Text(frame_buttons1, height=1, width=5)
             globals()['grp{}_size'.format(k)].grid(row= k-1, column= 1)
             globals()['grp{}_size'.format(k)].configure(state="normal", background="white")
@@ -492,7 +491,7 @@ class Resource_Step1_sub(tk.Toplevel):    # resource- failure rate
 
         frame_buttons1.update_idletasks()
 
-        sub_frame4.config(width=270, height=270)
+        sub_frame4.config(width=250, height=270)
         canvas1.config(scrollregion=canvas1.bbox("all"))
 
 
@@ -502,7 +501,7 @@ class Resource_Step1_sub(tk.Toplevel):    # resource- failure rate
         base_frame_label2.grid(row=1, column=1,sticky='nwse', padx=10)
 
         sub_frame3 =Frame(base_frame_label2, bg='gray1')
-        sub_frame3.grid(row=0, column=0, sticky='nwse', padx=10,pady=10)
+        sub_frame3.grid(row=0, column=0, sticky='ns', padx=10,pady=10)
 
         sub_frame3.rowconfigure(0, weight=1)
         sub_frame3.columnconfigure(0, weight=1)
@@ -511,7 +510,7 @@ class Resource_Step1_sub(tk.Toplevel):    # resource- failure rate
         canvas = Canvas(sub_frame3, bd=0, bg='gray1', highlightthickness=0)
         canvas.grid(row=0, column=0, sticky="news")
         vsb = tk.Scrollbar(sub_frame3, orient="vertical", command=canvas.yview)
-        vsb.grid(row=0, column=1, sticky='ns')
+        vsb.grid(row=0, column=1, padx= (2,0), sticky='nsw')
         canvas.configure(yscrollcommand=vsb.set)
 
         frame_buttons2 = Frame(canvas, bg='gray1')
@@ -522,11 +521,10 @@ class Resource_Step1_sub(tk.Toplevel):    # resource- failure rate
             k += 1
             globals()['act{}'.format(k)] = Label(frame_buttons2, text='{} = '.format(i), font=("Consolas", 10, 'bold'),
                                   fg="white", bg='gray1' ,anchor="w")
-            globals()['act{}'.format(k)].grid(row= k-1, column= 0)
-            globals()['act{}'.format(k)].config(width=30)
+            globals()['act{}'.format(k)].grid(row= k-1, column= 0,sticky='w')
             globals()['dist1{}'.format(k)] = tk.StringVar()
-            globals()['act{}_grp'.format(k)] = ttk.Combobox(frame_buttons2, width=14, textvariable=['dist1{}'.format(k)])
-            globals()['act{}_grp'.format(k)].grid(row= k-1, column= 1)
+            globals()['act{}_grp'.format(k)] = ttk.Combobox(frame_buttons2, width=16, textvariable=['dist1{}'.format(k)])
+            globals()['act{}_grp'.format(k)].grid(row= k-1, column= 1, padx=(0,3))
             globals()['act{}_grp'.format(k)]['values']= list(["Resource_Group" + str(i) for i in range(0,int(self.ngroup))])
             globals()['act{}_grp'.format(k)].current(numpy.random.randint(0, int(self.ngroup) ) )
 

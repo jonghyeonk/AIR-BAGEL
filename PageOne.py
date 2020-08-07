@@ -281,6 +281,7 @@ class PageOne(tk.Frame):
         panel1.photo = smaller_image1
         panel1.grid(row=0, column=0)
 
+
         def callback(url):
             webbrowser.open_new(url)
 
@@ -298,6 +299,7 @@ class PageOne(tk.Frame):
         panel2 = Label(image_frame, image = smaller_image2, bg ='gray1',borderwidth=0, highlightthickness=0)
         panel2.photo = smaller_image2
         panel2.grid(row=1, column=0, pady=5)
+
 
         link2 = Label(image_frame, text=" Github repository", bg = 'gray1', fg="cyan2", cursor="hand2")
         link2.bind("<Button-1>", lambda e: callback("https://github.com/jonghyeonk/AIR-BAGEL"))
