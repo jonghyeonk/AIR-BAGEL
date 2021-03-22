@@ -256,7 +256,8 @@ class Resource_step1_self(tk.Toplevel):
                 numpy.random.seed(seed_value)
             PF = numpy.random.binomial(numpy.repeat(1, len(extracted_data2)), extracted_data2["Resource_failure_rate"])
             numpy.random.seed(0)
-            extracted_data2['Resource_Pass/Fail'] = PF
+            # extracted_data2['Resource_Pass/Fail'] = PF
+            extracted_data2['Resource_Anomaly/Normal'] = PF
             extracted_data3 = extracted_data2
             Inject_Anomaly.extracted_data2 = extracted_data3    # Dataset with resource anomaly
             messagebox.showinfo("Message", "Completed: parameters on resource root have been defined")
@@ -297,7 +298,7 @@ class Resource_self_sub(tk.Toplevel):    # resource- failure rate
 
         # System info (center-top)
 
-        # Reference to represent the number of activity  (center-top)
+        # Reference to represent the number of activity  (left-top)
         global activitylist
         params = {
             'Case': 'count'
@@ -386,10 +387,12 @@ class Resource_self_sub(tk.Toplevel):    # resource- failure rate
             dat['Resource_Group'] = pd.DataFrame(rl)
             dat = dat[['Activity' , 'Resource_Group']]
 
+
+
             global extracted_data4
             extracted_data4 = pd.merge(self.extracted_data, dat, on="Activity")
-            d = {'Resource_Group': ["Resource_Group" + str(i) for i in range(0, 10)],
-                 'Resource_Group_Size': range(0, 10)}
+            d = {'Resource_Group': ["Resource_Group" + str(i) for i in range(0, int(self.ngroup))],
+                 'Resource_Group_Size': [ globals()['grp{}_size'.format(i)].get("1.0", "end-1c") for i in range(1, int(self.ngroup)+1)] }
             group_size = pd.DataFrame(data=d)
             extracted_data4 = pd.merge(extracted_data4, group_size , on="Resource_Group")
             attach = ["res_" + str(numpy.random.randint(0,int(i)+1)) for i in extracted_data4["Resource_Group_Size"]]

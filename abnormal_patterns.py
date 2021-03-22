@@ -62,6 +62,13 @@ class Abnorm_p():
         df_new = pd.DataFrame.copy(df)
         df["check"] = 1
         df_new["order"] = df.groupby(["Case"])["check"].cumsum()            #length = event position in a case
+        fix1_i = list(df_new.index[(df_new["type"] == 'incomplete') & (df_new["order"] == 1) & (df["Resource_Anomaly/Normal"] == 1)])
+        fix1_c = list(df_new.loc[fix1_i, "Case"])
+        fix2_i = list(df_new.index[ df_new["Case"].isin(fix1_c) ])
+        df_new.loc[fix1_i, "Resource_Anomaly/Normal"] = 0
+        df_new.loc[fix2_i, "type"] = 'normal'
+        df_new.loc[fix2_i, "cusum"] = 0
+
         df_new["max"] = df_new.groupby(["Case"])["order"].transform("max")  #max = trace length
         df_new["parameter_l"] = np.nan
         df_new["parameter_r"] = np.nan
@@ -73,7 +80,7 @@ class Abnorm_p():
         df_ct = df_new.loc[(df_new["Resource_Anomaly/Normal"] == 1) & (df_new["cusum"] == 1) & (df_new["type"] is not np.nan)]
         df_ct["resource_anomaly_type"] = df_ct["type"]
         df_ct = df_ct[["Case", "resource_anomaly_type"]]
-        df_new = pd.merge(df_new, df_ct, on="Case", how="outer")
+        df_new = pd.merge(df_new, df_ct, on="Case", how="left")
         df_new.loc[df_new["resource_anomaly_type"].isna(), "resource_anomaly_type"] = "normal"
         if "skip" in df_new["type"].unique():
             df_new.loc[(df_new["Resource_Anomaly/Normal"] == 1) & (df_new["cusum"] == 1) & (df_new["type"] == "skip"), "parameter_l"] = 1
@@ -122,9 +129,9 @@ class Abnorm_p():
         if "switch" in list(df_new["type"]):
             c_list = df_new[(df_new["cusum"] == 1) & (df_new["type"] == "switch")]
             c_list = c_list.groupby(["cusum"])["Case"].unique()
-            m_case = df_new[(df_new["resource_anomaly_type"] == "switch")]
-            n_case = df_new[df_new["resource_anomaly_type"] == "normal"]
-            a_case = df_new[(df_new["resource_anomaly_type"] != "switch") & (df_new["resource_anomaly_type"] != "normal")]
+            m_case = df_new[(df_new["resource_anomaly_type"] == "switch")]  #switch_from
+            n_case = df_new[df_new["resource_anomaly_type"] == "normal"] #switch_to
+            a_case = df_new[(df_new["resource_anomaly_type"] != "switch") & (df_new["resource_anomaly_type"] != "normal")] #others
             m_case_list = m_case["Case"].unique()
             n_case_list = n_case["Case"].unique()
             n_case_list = list(np.random.choice(n_case_list, len(m_case_list), replace=False))
@@ -137,9 +144,10 @@ class Abnorm_p():
         else:
             pass
         df_p = df_new.loc[(df_new["Resource_Anomaly/Normal"] == 1) & (df_new["cusum"] == 1) & (df_new["type"] is not np.nan)]
-        df_p["resource_parameter"] = df_p.apply(lambda x: "loc = {0}, len = {1}".format(x["order"], x["parameter"]) if x["resource_anomaly_type"] != "form based" else "loc = {0}, len = {1}".format(x["order"], x["parameter"]), axis=1)
+        df_p["resource_parameter"] = df_p.apply(lambda x: "loc = {0}, len = {1}".format(x["order"], x["parameter"]) if x["resource_anomaly_type"] != "incomplete" else "loc = {0}, len = NaN".format(x["order"]), axis=1)
         df_p = df_p[["Case", "resource_parameter"]]
-        df_new = pd.merge(df_new, df_p, on="Case", how="outer")
+        df_new = pd.merge(df_new, df_p, on="Case", how="left")
+
         df_new["Resource_Anomaly/Normal"] = df_new.apply(lambda x: 0 if (x["Resource_Anomaly/Normal"] == 1) & (x["cusum"] != 1) else x["Resource_Anomaly/Normal"], axis=1)
         df_new.reset_index(drop=True, inplace=True)
         global data_with_parameter_res
@@ -152,7 +160,7 @@ class Abnorm_p():
     def skip(self, df):
 
         df_new = pd.DataFrame.copy(df)
-        list_skip_i = list(df_new.index[(df_new["type"] == "skip") & (df_new["cusum"] == 1) & (df_new["order"] != 1)])
+        list_skip_i = list(df_new.index[(df_new["type"] == "skip") & (df_new["cusum"] == 1) ])
         list_skip_p = list(df_new.loc[list_skip_i, "parameter"])
         dic_skip = {"index": list_skip_i, "parameter": list_skip_p}
         list_skip = pd.DataFrame(dic_skip)
@@ -171,7 +179,7 @@ class Abnorm_p():
         df_ct = df_new.loc[(df_new["Resource_Anomaly/Normal"] == 1) & (df_new["cusum"] == 1) & (df_new["type"] == "form based")]
         df_ct["resource_check1"] = df_ct["Resource"]
         df_ct = df_ct[["Case", "resource_check1"]]
-        df_new = pd.merge(df_new, df_ct, on="Case", how="outer")
+        df_new = pd.merge(df_new, df_ct, on="Case", how="left")
         df_new["resource_check2"] = df_new.apply(lambda x: 1 if x["Resource"] == x["resource_check1"] else 0, axis=1)
         list_form_i = list(df_new.index[(df_new["type"] == "form based") & (df_new["cusum"] == 1)])
         list_form_p = list(df_new.loc[list_form_i, "parameter"])
@@ -276,14 +284,14 @@ class Abnorm_p():
 
         df_new = pd.DataFrame.copy(df)
         df_new["resource_anomaly_type"] = np.where(df_new["resource_anomaly_type"] == "switch", "switch_from", df_new["resource_anomaly_type"])
-        c_list = df_new[(df_new["cusum"] == 1) & (df_new["type"] == "switch") & (df_new["order"] != 1)]
+        c_list = df_new[(df_new["cusum"] == 1) & (df_new["type"] == "switch") ]
         c_list = c_list.groupby(["cusum"])["Case"].unique()
         c_list = list(c_list[1])
-        list_n_i = list(df_new.index[(df_new["cusum"] == 0) & (df_new["parameter_r"].isin(c_list))])
+        list_n_i = list(df_new.index[(df_new["cusum"] == 0) & (df_new["parameter_r"].isin(c_list))])   # switch_to
         list_n_c = list(df_new.loc[list_n_i, "Case"])
         list_n_ts = list(df_new.loc[list_n_i, "Timestamp"])
         list_n_d = list(df_new.loc[list_n_i, "duration"])
-        list_switch_i = list(df_new.index[(df_new["type"] == "switch") & (df_new["cusum"] == 1) & (df_new["order"] != 1)])
+        list_switch_i = list(df_new.index[(df_new["type"] == "switch") & (df_new["cusum"] == 1) ])  # switch_from
         list_switch_c = list(df_new.loc[list_switch_i, "Case"])
         list_switch_p = list(df_new.loc[list_switch_i, "parameter"])
         list_switch_ts = list(df_new.loc[list_switch_i, "Timestamp"])
@@ -293,7 +301,7 @@ class Abnorm_p():
         list_switch = pd.DataFrame(dic_switch)
         list_switch_1 = list_switch.apply(lambda row: np.arange(row["index"], int(row["index"] + row["parameter"]), 1),
                                         axis=1)
-        list_switch_1 = np.concatenate(list_switch_1)
+        list_switch_1 = np.concatenate(list_switch_1)   #index of moved events in switch_from
         list_switch_2 = list_switch.apply(lambda row: np.repeat(a=row["parameter_c"], repeats=row["parameter"]),
                                         axis=1)
         list_switch_2 = np.concatenate(list_switch_2)
@@ -306,7 +314,7 @@ class Abnorm_p():
         list_switch_i2 = set(list_switch_1)
         list_clean = [x for x in list(df_new.index) if x not in list_switch_i2]
         switch_c = df_new.loc[list_clean]
-        switch_f = df_new.loc[list_switch_1]
+        switch_f = df_new.loc[list_switch_1]  # switch_to
         switch_c.reset_index(inplace=True, drop=True)
         switch_f.reset_index(inplace=True, drop=True)
         switch_f["resource_parameter"] = switch_f.apply(lambda x: "caseID = {0}".format(x["Case"]), axis=1)

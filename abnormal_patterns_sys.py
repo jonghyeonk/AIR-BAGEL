@@ -89,7 +89,7 @@ class Abnorm_sys():
         df_ct["sys_anomaly_type"] = df_ct["type"]
         df_ct["sys_parameter"] = df_ct.apply(lambda x: "sysID = {0}, start = {1}, end = {2}, duration = {3}".format(x["System"], x["down_start"], x["down_finish"], x["down_duration"]), axis=1)
         df_ct = df_ct[["Case", "sys_anomaly_type", "sys_parameter"]]
-        df_new = pd.merge(df_new, df_ct, on="Case", how="outer")
+        df_new = pd.merge(df_new, df_ct, on="Case", how="left")
         df_new.loc[df_new["sys_anomaly_type"].isna(), "sys_anomaly_type"] = "normal"
         df_new.reset_index(drop=True, inplace=True)
         global data_with_parameter_sys

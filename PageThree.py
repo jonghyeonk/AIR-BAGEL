@@ -16,19 +16,28 @@ import numpy as np
 import pandas as pd
 
 #For PM4PY
-from pm4py.objects.conversion.log import factory as conversion_factory
-from pm4py.objects.log.adapters.pandas import csv_import_adapter
-from pm4py.algo.discovery.inductive import factory as inductive_miner
-from pm4py.visualization.process_tree import factory as pt_vis_factory
-from pm4py.visualization.petrinet import factory as vis_factory
-from pm4py.visualization.petrinet import factory as pn_vis_factory
 
-from pm4py.objects.conversion.log import factory as conversion_factory
-from pm4py.objects.log.adapters.pandas import csv_import_adapter
-from pm4py.algo.discovery.inductive import factory as inductive_miner
-from pm4py.visualization.process_tree import factory as pt_vis_factory
-from pm4py.visualization.petrinet import factory as vis_factory
-from pm4py.visualization.petrinet import factory as pn_vis_factory
+# import pm4py
+
+# from pm4py.objects.conversion.log import factory as conversion_factory
+# from pm4py.objects.log.adapters.pandas import csv_import_adapter
+# from pm4py.algo.discovery.inductive import factory as inductive_miner
+# from pm4py.visualization.process_tree import factory as pt_vis_factory
+# from pm4py.visualization.petrinet import factory as vis_factory
+# from pm4py.visualization.petrinet import factory as pn_vis_factory
+#
+# from pm4py.objects.conversion.log import factory as conversion_factory
+# from pm4py.objects.log.adapters.pandas import csv_import_adapter
+# from pm4py.algo.discovery.inductive import factory as inductive_miner
+# from pm4py.visualization.process_tree import factory as pt_vis_factory
+# from pm4py.visualization.petrinet import factory as vis_factory
+# from pm4py.visualization.petrinet import factory as pn_vis_factory
+
+import pm4py
+from pm4py.objects.conversion.log import converter as log_converter
+from pm4py.algo.discovery.inductive import algorithm as inductive_miner
+from pm4py.visualization.petrinet import visualizer as pn_visualizer
+
 
 class PageThree(tk.Frame):
 
@@ -590,9 +599,9 @@ class PageThree(tk.Frame):
 
                     before.columns = ['case:concept:name', 'concept:name', "time:timestamp", "Resource"]
 
-                before_log = conversion_factory.apply(before)
+                before_log = log_converter.apply(before)
                 b_net, b_initial_marking, b_final_marking = inductive_miner.apply(before_log)
-                before_gviz = vis_factory.apply(b_net, b_initial_marking, b_final_marking)
+                before_gviz = pn_visualizer.apply(b_net, b_initial_marking, b_final_marking)
                 b_click = 1
                 before_gviz.view()
 
@@ -616,9 +625,9 @@ class PageThree(tk.Frame):
 
                     after.columns = ['case:concept:name', 'concept:name', "time:timestamp", "Resource"]
 
-                after_log = conversion_factory.apply(after)
+                after_log = log_converter.apply(after)
                 a_net, a_initial_marking, a_final_marking = inductive_miner.apply(after_log)
-                after_gviz = vis_factory.apply(a_net, a_initial_marking, a_final_marking)
+                after_gviz = pn_visualizer.apply(a_net, a_initial_marking, a_final_marking)
                 a_click = 1
                 after_gviz.view()
 
@@ -626,7 +635,7 @@ class PageThree(tk.Frame):
 
         def function_before_get(b_click):
             if b_click ==1 :
-                pn_vis_factory.save(before_gviz, "clean_process.png")
+                pn_visualizer.save(before_gviz, "clean_process.png")
                 messagebox.showinfo("Message", "Downloaded in 'output' folder")
 
             else:
@@ -644,11 +653,11 @@ class PageThree(tk.Frame):
 
                     before.columns = ['case:concept:name', 'concept:name', "time:timestamp", "Resource"]
 
-                before_log = conversion_factory.apply(before)
+                before_log = log_converter.apply(before)
                 b_net, b_initial_marking, b_final_marking = inductive_miner.apply(before_log)
-                before_gviz = vis_factory.apply(b_net, b_initial_marking, b_final_marking)
+                before_gviz = pn_visualizer.apply(b_net, b_initial_marking, b_final_marking)
                 b_click = 1
-                pn_vis_factory.save(before_gviz, "{}_clean_process.png".format(self.dat_name))
+                pn_visualizer.save(before_gviz, "{}_clean_process.png".format(self.dat_name))
                 messagebox.showinfo("Message", "Downloaded in 'output' folder")
 
                 
@@ -657,7 +666,7 @@ class PageThree(tk.Frame):
 
         def function_after_get(a_click):
             if a_click == 1:
-                pn_vis_factory.save(after_gviz, "anomaly_process.png")
+                pn_visualizer.save(after_gviz, "anomaly_process.png")
                 messagebox.showinfo("Message", "Downloaded in 'output' folder")
 
             else:
@@ -675,11 +684,11 @@ class PageThree(tk.Frame):
 
                     after.columns = ['case:concept:name', 'concept:name', "time:timestamp", "Resource"]
 
-                after_log = conversion_factory.apply(after)
+                after_log = log_converter.apply(after)
                 a_net, a_initial_marking, a_final_marking = inductive_miner.apply(after_log)
-                after_gviz = vis_factory.apply(a_net, a_initial_marking, a_final_marking)
+                after_gviz = pn_visualizer.apply(a_net, a_initial_marking, a_final_marking)
                 a_click = 1
-                pn_vis_factory.save(after_gviz, "{}_anomaly_process.png".format(self.dat_name))
+                pn_visualizer.save(after_gviz, "{}_anomaly_process.png".format(self.dat_name))
                 messagebox.showinfo("Message", "Downloaded in 'output' folder")
 
             return a_click

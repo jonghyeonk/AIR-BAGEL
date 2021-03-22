@@ -26,6 +26,8 @@ from PageTwo_System import System_Step1
 from PageThree import PageThree
 from PageTwo_Inject_Anomaly import Inject_Anomaly
 
+
+
 class GridTest(tk.Tk):
 
     def __init__(self, *args, **kwargs):
@@ -33,12 +35,6 @@ class GridTest(tk.Tk):
         self.title("AIR-BAGEL")
         self.rowconfigure(0, weight=1)
         self.columnconfigure(0, weight=1)
-
-        # global container
-        # container = tk.Frame(self)
-        # container.grid(row=0, column=0, columnspan=10, rowspan=10, sticky="nsew")
-        # container.grid_rowconfigure(0, weight=1)
-        # container.grid_columnconfigure(0, weight=1)
 
         self.frames = {}
 
@@ -417,11 +413,14 @@ class PageOne(tk.Frame):
 
                 if selected_eventid!="-- no attribute --" :
                     extracted_data = event_log[[selected_caseid, selected_eventid, selected_activity, selected_timestamp]]
+
                 extracted_data.columns = \
                     ["Case", "Event", "Activity", "Timestamp"]
+                extracted_data = extracted_data.dropna(subset=['Case'])
                 PageTwo.firstpreprocess = extracted_data
                 extracted_data = extracted_data.sort_values(["Case", "Timestamp"],
                                                             ascending=[True, True])
+
 
                 form_dict = {"2020-01-02 03:04:05.006":"%Y-%m-%d %H:%M:%S.%f",
                              "2020-01-02 03:04:05":"%Y-%m-%d %H:%M:%S",
