@@ -407,13 +407,19 @@ class Resource_Step1(tk.Toplevel):    # resource- failure rate
         def passfail():
             extracted_data2 = self.extracted_data2
             resourcelist3 = resourcelist2[["Resource", "Resource_failure_rate"]]
-            extracted_data2 = pd.merge(extracted_data2, resourcelist3, on="Resource")
+            extracted_data2 = pd.merge(extracted_data2, resourcelist3, on="Resource", how='left')
+            pd.set_option('display.max_columns', None)
+            print(extracted_data2.loc[extracted_data2['Case'] ==  'AGA'])
+            extracted_data2['Resource_failure_rate'] = extracted_data2['Resource_failure_rate'].fillna(0)
             if seedBox1.get("1.0", "end-1c") != '':
                 seed_value = int(seedBox1.get("1.0", "end-1c"))
                 numpy.random.seed(seed_value)
             PF = numpy.random.binomial(numpy.repeat(1, len(extracted_data2)), extracted_data2["Resource_failure_rate"])
             numpy.random.seed(0)
             extracted_data2['Resource_Anomaly/Normal'] = PF
+            pd.set_option('display.max_columns', None)
+            print(extracted_data2.loc[extracted_data2['Case'] ==  'AGA'])
+
             extracted_data3 = extracted_data2
             Inject_Anomaly.extracted_data2 = extracted_data3    # Dataset with resource anomaly
             messagebox.showinfo("Message", "Completed: parameters on resource root have been defined")
