@@ -409,7 +409,6 @@ class Resource_Step1(tk.Toplevel):    # resource- failure rate
             resourcelist3 = resourcelist2[["Resource", "Resource_failure_rate"]]
             extracted_data2 = pd.merge(extracted_data2, resourcelist3, on="Resource", how='left')
             pd.set_option('display.max_columns', None)
-            print(extracted_data2.loc[extracted_data2['Case'] ==  'AGA'])
             extracted_data2['Resource_failure_rate'] = extracted_data2['Resource_failure_rate'].fillna(0)
             if seedBox1.get("1.0", "end-1c") != '':
                 seed_value = int(seedBox1.get("1.0", "end-1c"))
@@ -418,7 +417,6 @@ class Resource_Step1(tk.Toplevel):    # resource- failure rate
             numpy.random.seed(0)
             extracted_data2['Resource_Anomaly/Normal'] = PF
             pd.set_option('display.max_columns', None)
-            print(extracted_data2.loc[extracted_data2['Case'] ==  'AGA'])
 
             extracted_data3 = extracted_data2
             Inject_Anomaly.extracted_data2 = extracted_data3    # Dataset with resource anomaly
